@@ -7,6 +7,10 @@
     </div>
 
     <script>
+        window.setTimeout(() => {
+            document.getElementById('status-message')?.remove();
+        }, 1000);
+
         window.addEventListener('pageshow', (event) => {
             if (event.persisted) {
                 document.getElementById('status-message')?.remove();

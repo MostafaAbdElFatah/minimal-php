@@ -6,7 +6,7 @@ use App\Enums\IdeaState;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreIdeaRequest extends FormRequest
+class IdeaRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

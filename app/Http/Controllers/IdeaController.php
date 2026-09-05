@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\IdeaState;
-use App\Http\Requests\StoreIdeaRequest;
-use App\Models\Idea;
+use App\Http\Requests\IdeaRequest;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
+use App\Models\Idea;
 
 class IdeaController extends Controller
 {
@@ -41,7 +39,7 @@ class IdeaController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreIdeaRequest $request)
+    public function store(IdeaRequest $request)
     {
         // $request = request();
         // $request->merge([
@@ -103,7 +101,7 @@ class IdeaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(StoreIdeaRequest $request, Idea $idea)
+    public function update(IdeaRequest $request, Idea $idea)
     {
         // $request = request();
         // $request->merge([
