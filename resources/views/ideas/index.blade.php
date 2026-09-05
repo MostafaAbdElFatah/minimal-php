@@ -3,12 +3,33 @@
     <div class="mt-10 flex items-center justify-between text-white">
         <h2 class="font-bold text-lg">Your Ideas</h2>
 
-        <a
-            href="/ideas/create"
-            class="rounded bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500"
-        >
-            + Create New Idea
-        </a>
+        <div class="flex items-center gap-2">
+            
+            <a
+                href="/ideas/create"
+                class="rounded bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500"
+            >
+                + Create New Idea
+            </a>
+
+            @if ($ideas->count() > 0)
+                <form
+                    method="POST"
+                    action="{{ route('ideas.destroy-all') }}"
+                    onsubmit="return confirm('Are you sure you want to delete all ideas? This action cannot be undone.')"
+                >
+                    @csrf
+                    @method('DELETE')
+
+                    <button
+                        type="submit"
+                        class="rounded bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-500"
+                    >
+                        Delete All Ideas
+                    </button>
+                </form>
+            @endif
+        </div>
     </div>
 
     <div class="mt-2">
