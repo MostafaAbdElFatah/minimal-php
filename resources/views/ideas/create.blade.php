@@ -1,4 +1,4 @@
-<x-layout title="Ideas" class="bg-gray-700 p-5 max-w-4xl mx-auto" :showNav="false">
+<x-layout title="Ideas">
     <form method="POST" action="/ideas/create">
         @csrf
 
@@ -9,80 +9,75 @@
                 This information will be displayed publicly so be careful what you share.
             </p>
 
-            <div class="mt-6 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6">
+            <div class="mt-6 list-">
 
                 {{-- Title --}}
-                <div class="sm:col-span-4">
-                    <label for="title" class="block text-sm/6 font-medium text-white">
+                <div>
+                    <label
+                        for="title"
+                        class="text-xs font-semibold uppercase tracking-wider text-gray-500"
+                    >
                         Title
                     </label>
 
-                    <div class="mt-2">
-                        <div class="flex items-center rounded-md bg-white/5 pl-3 outline-1 -outline-offset-1 outline-white/10 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-500">
-                            <input
-                                id="title"
-                                type="text"
-                                name="title"
-                                value="{{ old('title') }}"
-                                placeholder="Title"
-                                required
-                                class="block min-w-0 grow bg-transparent py-1.5 pr-3 pl-1 text-base text-white placeholder:text-gray-500 focus:outline-none sm:text-sm/6"
-                            />
-                        </div>
-                    </div>
-
-                    <x-error name="title"/>                
+                    <input
+                        type="text"
+                        id="title"
+                        name="title"
+                        value="{{ old('title') }}"
+                        required
+                        class="mt-2 w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-white placeholder-gray-500 outline-none transition-all duration-200 focus:border-indigo-500/50 focus:bg-white/[0.05] focus:ring-2 focus:ring-indigo-500/20"
+                        placeholder="Enter idea title"
+                    >
+                    <x-error name="title"/> 
                 </div>
+             
 
                 {{-- State --}}
-                <div class="sm:col-span-4">
-                    <label for="state" class="block text-sm/6 font-medium text-white">
+                <div>
+                    <label
+                        for="state"
+                        class="text-xs font-semibold uppercase tracking-wider text-gray-500"
+                    >
                         State
                     </label>
 
-                    <div class="mt-2">
-                        <select
-                            id="state"
-                            name="state"
-                            required
-                            class="block w-full rounded-md bg-white/5 px-3 py-2 text-base text-white outline-1 -outline-offset-1 outline-white/10 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
-                        >
-                            @foreach (\App\Enums\IdeaState::cases() as $state)
-                                <option
-                                    value="{{ $state->value }}"
-                                    class="bg-gray-800"
-                                    {{ old('state', 'pending') === $state->value ? 'selected' : '' }}
-                                >
-                                    {{ $state->value }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <x-error name="state" />
-
+                    <select
+                        id="state"
+                        name="state"
+                        required
+                        class="mt-2 w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-white outline-none transition-all duration-200 focus:border-indigo-500/50 focus:bg-white/[0.05] focus:ring-2 focus:ring-indigo-500/20"
+                    >
+                        @foreach (\App\Enums\IdeaState::cases() as $state)
+                            <option
+                                value="{{ $state->value }}"
+                                class="bg-gray-800"
+                                {{ old('state') === $state->value ? 'selected' : '' }}
+                            >
+                                {{ $state }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <x-error name="state"/> 
                 </div>
 
                 {{-- Description --}}
-                <div class="col-span-full">
-                    <label for="description" class="block text-sm/6 font-medium text-white">
+                <div>
+                    <label
+                        for="description"
+                        class="text-xs font-semibold uppercase tracking-wider text-gray-500"
+                    >
                         Description
                     </label>
 
-                    <div class="mt-2">
-                        <textarea
-                            id="description"
-                            name="description"
-                            rows="3"
-                            required
-                            class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
-                            placeholder="Describe your idea..."
-                        >{{ old('description') }}</textarea>
-                    </div>
-
-                    <p class="mt-3 text-sm/6 text-gray-400">
-                        Write a few sentences about your idea.
-                    </p>
+                    <textarea
+                        id="description"
+                        name="description"
+                        rows="4"
+                        required
+                        class="mt-2 w-full resize-none rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm leading-6 text-gray-300 placeholder-gray-500 outline-none transition-all duration-200 focus:border-indigo-500/50 focus:bg-white/[0.05] focus:ring-2 focus:ring-indigo-500/20"
+                        placeholder="Describe your idea..."
+                    >{{ old('description') }}</textarea>
 
                     <x-error name="description"/> 
                 </div>

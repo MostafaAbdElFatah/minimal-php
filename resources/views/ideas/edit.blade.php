@@ -1,8 +1,6 @@
 <x-layout
     title="Edit {{ $idea->title }}"
-    class="bg-gray-700 p-5 max-w-4xl mx-auto"
-    :showNav="false"
->
+    >
     <div class="mt-10 flex flex-col items-center text-white">
 
         <x-card
@@ -140,6 +138,5 @@
                 </div>
             </form>
         </x-card>
-
     </div>
 </x-layout>

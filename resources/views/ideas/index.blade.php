@@ -1,4 +1,4 @@
-<x-layout title="Ideas" class="bg-gray-700 p-5 max-w-4xl mx-auto" :showNav="false">
+<x-layout title="Ideas">
 
     <div class="mt-10 flex items-center justify-between text-white">
         <h2 class="font-bold text-lg">Your Ideas</h2>
@@ -9,7 +9,7 @@
                 href="/ideas/create"
                 class="rounded bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500"
             >
-                + Create New Idea
+                + New Idea
             </a>
 
             @if ($ideas->count() > 0)
@@ -76,29 +76,10 @@
     </div>
 
     <div class="text-white">
-        <ul class="mt-4 list-disc list-inside text-sm/6 text-gray-400">
-
+        <ul class="mt-4 grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-6">
             @forelse ($ideas as $idea)
-
-                <li>
-                    <a
-                        href="/ideas/{{ $idea->id }}"
-                        class="group inline-flex items-center gap-2 text-{{ $idea->color }}-400 hover:text-indigo-400 transition-colors duration-200"
-                    >
-                        <span>
-                            {{ $idea->title }}
-                        </span>
-
-                        {{-- State shown on hover --}}
-                        <span
-                            class="text-xs font-medium opacity-0 transition-all duration-200 group-hover:opacity-100"
-                        >
-                            ({{ $idea->state }})
-                        </span>
-                    </a>
-                </li>
-
-        @empty
+                <x-idea.idea-card :idea="$idea" />
+            @empty
 
             <li class="list-none py-10 text-center">
                 <div class="flex flex-col items-center gap-3">
@@ -176,7 +157,4 @@
 
         </ul>
     </div>
-
-    <x-status-message />
-
 </x-layout>
