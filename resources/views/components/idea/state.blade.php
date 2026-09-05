@@ -14,7 +14,7 @@
         id="state"
         name="state"
         required
-        class="mt-2 w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-white outline-none transition-all duration-200 focus:border-indigo-500/50 focus:bg-white/[0.05] focus:ring-2 focus:ring-indigo-500/20"
+        class="mt-2 w-full rounded-xl border @error('state') border-error @else border-white/10 @enderror bg-white/[0.03] px-4 py-2.5 text-sm text-white outline-none transition-all duration-200 focus:border-indigo-500/50 focus:bg-white/[0.05] focus:ring-2 focus:ring-indigo-500/20"
     >
         @foreach (\App\Enums\IdeaState::cases() as $state)
             <option
