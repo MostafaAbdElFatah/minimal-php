@@ -1,10 +1,13 @@
-<details>
-    <summary>Account</summary>
+<div class="flex-none">
+    <ul 
+    class="menu menu-horizontal px-1">
+        <li>
+            <details data-menu="theme">
+                <summary>Theme</summary>
 
-    <ul
-        tabindex="-1"
-        class="dropdown-content bg-base-100 rounded-box z-1 mt-3 max-h-96 w-52 overflow-y-auto p-2 shadow"
-    >
+                <ul
+                    class="max-h-96 w-52 overflow-y-auto rounded-t-none bg-base-100 p-2"
+                >
         <li>
             <input
                 type="radio"
@@ -320,5 +323,8 @@
                 value="silk"
             />
         </li>
+                </ul>
+            </details>
+        </li>
     </ul>
-</details>
+</div>

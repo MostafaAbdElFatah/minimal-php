@@ -66,7 +66,8 @@
 
 
     {{-- Right --}}
-    <div class="navbar-end">
+    <div class="navbar-end gap-2">
+        <x-theme />
         <x-user-menu />
     </div>
 

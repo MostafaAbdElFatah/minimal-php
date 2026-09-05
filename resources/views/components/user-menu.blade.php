@@ -1,6 +1,6 @@
 @auth
     {{-- Logged in --}}
-    <div class="dropdown dropdown-end">
+    <div class="dropdown dropdown-end" data-menu="account">
         <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
             <div class="w-10 rounded-full">
                 <img
@@ -42,9 +42,8 @@
     {{-- Not logged in --}}
     <div class="flex-none">
         <ul class="menu menu-horizontal px-1">
-            <li><x-theme /></li>
             <li>
-                <details>
+                <details data-menu="account">
                     <summary>Account</summary>
 
                     <ul class="bg-base-100 rounded-t-none p-2">
