@@ -122,20 +122,5 @@
         </div>
         </x-card>
     </div>
-     @if (session('success'))
-        <div
-            id="success-message"
-            class="fixed bottom-5 right-5 z-50 rounded-lg bg-green-600 px-5 py-3 text-white shadow-lg"
-        >
-            {{ session('success') }}
-        </div>
-
-        <script>
-            window.addEventListener('pageshow', (event) => {
-                if (event.persisted) {
-                    document.getElementById('success-message')?.remove();
-                }
-            });
-        </script>
-    @endif
+    <x-status-message />
 </x-layout>

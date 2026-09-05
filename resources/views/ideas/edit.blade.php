@@ -38,12 +38,7 @@
                         class="mt-2 w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-white placeholder-gray-500 outline-none transition-all duration-200 focus:border-indigo-500/50 focus:bg-white/[0.05] focus:ring-2 focus:ring-indigo-500/20"
                         placeholder="Enter idea title"
                     >
-
-                    @error('title')
-                        <p class="mt-1.5 text-xs text-red-400">
-                            {{ $message }}
-                        </p>
-                    @enderror
+                    <x-error name="title"/> 
                 </div>
 
                 {{-- State --}}
@@ -71,12 +66,7 @@
                             </option>
                         @endforeach
                     </select>
-
-                    @error('state')
-                        <p class="mt-1.5 text-xs text-red-400">
-                            {{ $message }}
-                        </p>
-                    @enderror
+                    <x-error name="state"/> 
                 </div>
 
                 {{-- Description --}}
@@ -97,11 +87,7 @@
                         placeholder="Describe your idea..."
                     >{{ old('description', $idea->description) }}</textarea>
 
-                    @error('description')
-                        <p class="mt-1.5 text-xs text-red-400">
-                            {{ $message }}
-                        </p>
-                    @enderror
+                    <x-error name="description"/> 
                 </div>
 
                 {{-- Actions --}}

@@ -8,6 +8,6 @@ test('it deletes all ideas after confirmation', function () {
     $response = $this->delete(route('ideas.destroy-all'));
 
     $response->assertRedirect('/');
-    $response->assertSessionHas('success', 'All ideas deleted successfully!');
+    $response->assertSessionHas('status', 'All ideas deleted successfully!');
     $this->assertDatabaseCount('ideas', 0);
 });

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\IdeaState;
 use App\Models\Idea;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -41,6 +42,25 @@ class IdeaController extends Controller
      */
     public function store(Request $request)
     {
+        request()->validate([
+            // old 'required|string|max:255',
+            'title' => [
+                'required',
+                'string',
+                'min:3',
+                'max:255',
+            ],
+            'description' => [
+                'required',
+                'string',
+                'min:10',
+            ],
+            'state' => [
+                'required',
+                'in:'.
+                    implode(',', array_map(fn ($state) => $state->value, IdeaState::cases())),
+            ],
+        ]);
         $title = request('title');
         $description = request('description');
         $state = request('state');
@@ -53,7 +73,7 @@ class IdeaController extends Controller
 
         ]);
 
-        return redirect('/')->with('success', 'Idea submitted successfully!');
+        return redirect('/')->with('status', 'Idea submitted successfully!');
     }
 
     /**
@@ -79,6 +99,25 @@ class IdeaController extends Controller
      */
     public function update(Request $request, Idea $idea)
     {
+        request()->validate([
+            // old 'required|string|max:255',
+            'title' => [
+                'required',
+                'string',
+                'min:3',
+                'max:255',
+            ],
+            'description' => [
+                'required',
+                'string',
+                'min:10',
+            ],
+            'state' => [
+                'required',
+                'in:'.
+                    implode(',', array_map(fn ($state) => $state->value, IdeaState::cases())),
+            ],
+        ]);
         // $idea = Idea::findOrFail($id);
         // $idea->description = request('description');
         // $idea->state = request('state');
@@ -89,7 +128,7 @@ class IdeaController extends Controller
             'state' => request('state'),
         ]);
 
-        return redirect("/ideas/{$idea->id}")->with('success', 'Idea updated successfully!');
+        return redirect("/ideas/{$idea->id}")->with('status', 'Idea updated successfully!');
     }
 
     /**
@@ -100,7 +139,7 @@ class IdeaController extends Controller
         // $idea = Idea::findOrFail($id);
         $idea->delete();
 
-        return redirect('/')->with('success', 'Idea deleted successfully!');
+        return redirect('/')->with('status', 'Idea deleted successfully!');
     }
 
     /**
@@ -109,6 +148,7 @@ class IdeaController extends Controller
     public function destroyAll(): RedirectResponse
     {
         Idea::query()->delete();
-        return redirect('/')->with('success', 'All ideas deleted successfully!');
+
+        return redirect('/')->with('status', 'All ideas deleted successfully!');
     }
 }

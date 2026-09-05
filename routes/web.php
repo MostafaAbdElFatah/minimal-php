@@ -17,7 +17,7 @@ Route::view('/welcome', 'welcome', [
 
 // Route::delete('/delete-ideas', function () {
 //     session()->forget('ideas');
-//     return redirect('/')->with('success', 'All ideas deleted successfully!');
+//     return redirect('/')->with('status', 'All ideas deleted successfully!');
 // });
 Route::get('/', [IdeaController::class, 'index']);
 Route::get('/ideas/create', [IdeaController::class, 'create']);

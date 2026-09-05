@@ -31,9 +31,7 @@
                         </div>
                     </div>
 
-                    @error('title')
-                        <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
-                    @enderror
+                    <x-error name="title"/>                
                 </div>
 
                 {{-- State --}}
@@ -61,9 +59,8 @@
                         </select>
                     </div>
 
-                    @error('state')
-                        <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
-                    @enderror
+                    <x-error name="state" />
+
                 </div>
 
                 {{-- Description --}}
@@ -87,9 +84,7 @@
                         Write a few sentences about your idea.
                     </p>
 
-                    @error('description')
-                        <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
-                    @enderror
+                    <x-error name="description"/> 
                 </div>
             </div>
         </div>
