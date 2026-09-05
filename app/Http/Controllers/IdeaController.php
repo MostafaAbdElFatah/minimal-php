@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\IdeaState;
+use App\Http\Requests\StoreIdeaRequest;
 use App\Models\Idea;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -40,27 +41,33 @@ class IdeaController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreIdeaRequest $request)
     {
-        request()->validate([
-            // old 'required|string|max:255',
-            'title' => [
-                'required',
-                'string',
-                'min:3',
-                'max:255',
-            ],
-            'description' => [
-                'required',
-                'string',
-                'min:10',
-            ],
-            'state' => [
-                'required',
-                'in:'.
-                    implode(',', array_map(fn ($state) => $state->value, IdeaState::cases())),
-            ],
-        ]);
+        // $request = request();
+        // $request->merge([
+        //     'title' => trim($request->input('title', '')),
+        //     'description' => trim($request->input('description', '')),
+        //     'state' => trim($request->input('state', '')),
+        // ]);
+        // request()->validate([
+        //     // old 'required|string|max:255',
+        //     'title' => [
+        //         'required',
+        //         'string',
+        //         'min:3',
+        //         'max:255',
+        //     ],
+        //     'description' => [
+        //         'required',
+        //         'string',
+        //         'min:10',
+        //     ],
+        //     'state' => [
+        //         'required',
+        //         'in:'.
+        //             implode(',', array_map(fn ($state) => $state->value, IdeaState::cases())),
+        //     ],
+        // ]);
         $title = request('title');
         $description = request('description');
         $state = request('state');
@@ -70,7 +77,6 @@ class IdeaController extends Controller
             'title' => $title,
             'description' => $description,
             'state' => $state,
-
         ]);
 
         return redirect('/')->with('status', 'Idea submitted successfully!');
@@ -97,27 +103,33 @@ class IdeaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Idea $idea)
+    public function update(StoreIdeaRequest $request, Idea $idea)
     {
-        request()->validate([
-            // old 'required|string|max:255',
-            'title' => [
-                'required',
-                'string',
-                'min:3',
-                'max:255',
-            ],
-            'description' => [
-                'required',
-                'string',
-                'min:10',
-            ],
-            'state' => [
-                'required',
-                'in:'.
-                    implode(',', array_map(fn ($state) => $state->value, IdeaState::cases())),
-            ],
-        ]);
+        // $request = request();
+        // $request->merge([
+        //     'title' => trim($request->input('title', '')),
+        //     'description' => trim($request->input('description', '')),
+        //     'state' => trim($request->input('state', '')),
+        // ]);
+        // request()->validate([
+        //     // old 'required|string|max:255',
+        //     'title' => [
+        //         'required',
+        //         'string',
+        //         'min:3',
+        //         'max:255',
+        //     ],
+        //     'description' => [
+        //         'required',
+        //         'string',
+        //         'min:10',
+        //     ],
+        //     'state' => [
+        //         'required',
+        //         'in:'.
+        //             implode(',', array_map(fn ($state) => $state->value, IdeaState::cases())),
+        //     ],
+        // ]);
         // $idea = Idea::findOrFail($id);
         // $idea->description = request('description');
         // $idea->state = request('state');
