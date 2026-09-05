@@ -1,10 +1,10 @@
 <div class="flex-none">
     <ul class="menu menu-horizontal px-1">
         <li>
-            <details data-menu="theme">
+            <details class="dropdown dropdown-end" data-menu="theme">
                 <summary>Theme</summary>
 
-                <ul class="menu menu-sm dropdown-content rounded-box bg-base-100 p-2 shadow">
+                <ul class="menu menu-sm dropdown-content z-50 max-h-96 w-52 overflow-y-auto rounded-box bg-base-100 p-2 shadow">
                     <li><input type="radio" name="theme-dropdown" class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start" aria-label="Light" value="light" /></li>
                     <li><input type="radio" name="theme-dropdown" class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start" aria-label="Dark" value="dark" /></li>
                     <li><input type="radio" name="theme-dropdown" class="theme-controller w-full btn btn-sm btn-block btn-ghost justify-start" aria-label="Cupcake" value="cupcake" /></li>

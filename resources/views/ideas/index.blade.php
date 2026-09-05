@@ -1,8 +1,9 @@
 <x-layout title="Ideas">
 
     <div class="mt-10 flex items-center justify-between text-white">
-        <h2 class="font-bold text-lg">Your Ideas</h2>
-
+        <h2 class="text-lg font-bold tracking-tight text-base-content">
+            Your <span class="text-primary">Ideas</span>
+        </h2>
         <div class="flex items-center gap-2">
             
             <a
@@ -32,48 +33,8 @@
         </div>
     </div>
 
-    <div class="mt-2">
-        <form method="GET" action="/">
-            <label
-                for="state"
-                class="text-xs font-semibold uppercase tracking-wider text-gray-500"
-            >
-                Filter by state
-            </label>
-
-            <div class="mt-2 flex items-center gap-2">
-                <select
-                    id="state"
-                    name="state"
-                    onchange="this.form.submit()"
-                    class="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20"
-                >
-                    <option value="" class="bg-gray-800">
-                        All states
-                    </option>
-
-                    @foreach (\App\Enums\IdeaState::cases() as $state)
-                        <option
-                            value="{{ $state->value }}"
-                            class="bg-gray-800"
-                            @selected(request('state') === $state->value)
-                        >
-                            {{ $state }}
-                        </option>
-                    @endforeach
-                </select>
-
-                @if (request('state'))
-                    <a
-                        href="/"
-                        class="rounded-lg px-3 py-2 text-sm text-gray-400 transition hover:bg-white/5 hover:text-white"
-                    >
-                        Clear
-                    </a>
-                @endif
-            </div>
-        </form>
-    </div>
+ 
+    <x-idea.status-filter />
 
     <div class="text-white">
         <ul class="mt-4 grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-6">

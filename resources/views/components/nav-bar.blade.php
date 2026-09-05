@@ -1,4 +1,4 @@
-<div class="navbar bg-base-100 shadow-sm">
+<div class="navbar relative z-50 bg-base-100 shadow-sm">
 
     {{-- Left --}}
     <div class="navbar-start">
