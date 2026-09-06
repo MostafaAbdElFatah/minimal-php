@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 class Idea extends Model
 {
     use HasFactory;
+
     protected $casts = [
         'state' => IdeaState::class,
     ];
@@ -18,6 +19,7 @@ class Idea extends Model
         'title',
         'description',
         'state',
+        'user_id',
     ];
 
     protected function color(): Attribute
