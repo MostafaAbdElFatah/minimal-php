@@ -30,6 +30,7 @@
             <li>
                 <form method="POST" action="/logout">
                     @csrf
+                    @method('DELETE')
 
                     <button type="submit" class="w-full text-left">
                         Logout
@@ -48,14 +49,14 @@
 
                     <ul class="bg-base-100 rounded-t-none p-2">
                         <li>
-                            <a href="/register">
-                                Register
+                            <a href="/login">
+                                Login
                             </a>
                         </li>
 
                         <li>
-                            <a href="/login">
-                                Login
+                            <a href="/register">
+                                Register
                             </a>
                         </li>
                     </ul>

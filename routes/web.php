@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\RegisterUserController;
+use App\Http\Controllers\Auth\SessionsController;
 use App\Http\Controllers\IdeaController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,7 +22,7 @@ Route::view('/welcome', 'welcome', [
 //     session()->forget('ideas');
 //     return redirect('/')->with('status', 'All ideas deleted successfully!');
 // });
-Route::get('/', [IdeaController::class, 'index']);
+Route::get('/', [IdeaController::class, 'index'])->name('home');
 Route::get('/ideas/create', [IdeaController::class, 'create']);
 Route::post('/ideas/create', [IdeaController::class, 'store']);
 Route::get('/ideas/{idea}', [IdeaController::class, 'show']);
@@ -35,6 +36,10 @@ Route::delete('/ideas', [IdeaController::class, 'destroyAll'])->name('ideas.dest
 // ==============================================================
 
 Route::get('/login', []);
-Route::get('/register', [RegisterUserController::class, 'create']);
+Route::get('/register', [RegisterUserController::class, 'create'])->name('register');
 Route::post('/register', [RegisterUserController::class, 'store']);
-
+Route::get('/login', [SessionsController::class, 'create'])->name('login');
+Route::post('/login', [SessionsController::class, 'store']);
+Route::delete('/logout', [SessionsController::class, 'destroy'])
+    ->middleware('auth')
+    ->name('logout');

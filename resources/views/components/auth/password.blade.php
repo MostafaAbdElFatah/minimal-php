@@ -3,6 +3,7 @@
     'label' => 'Password',
     'value' => null,
     'autocomplete' => 'current-password',
+    'showStrength' => false,
 ])
 
 <div {{ $attributes->only('class')->merge(['class' => 'space-y-2']) }}>
@@ -37,5 +38,18 @@
             </svg>
         </button>
     </div>
+    @if ($showStrength)
+        <div data-password-strength="{{ $name }}" class="hidden space-y-2 pt-1" aria-live="polite">
+            <div class="flex gap-1.5" aria-hidden="true">
+                @foreach (range(1, 4) as $segment)
+                    <span data-strength-segment="{{ $segment }}" class="h-1.5 flex-1 rounded-full bg-base-300 transition-colors duration-300"></span>
+                @endforeach
+            </div>
+            <div class="flex items-center justify-between gap-3 text-xs">
+                <span data-strength-label class="font-semibold text-base-content/65">Very weak</span>
+                <span data-strength-hint class="text-right text-base-content/50">Use 12+ characters with a mix of letters, numbers, and symbols.</span>
+            </div>
+        </div>
+    @endif
     <x-error :name="$name" />
 </div>

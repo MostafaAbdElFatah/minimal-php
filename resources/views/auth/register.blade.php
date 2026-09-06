@@ -22,7 +22,7 @@
                         <x-auth.name name="last_name" label="Last name" autocomplete="family-name" />
                     </div>
                     <x-auth.email />
-                    <x-auth.password name="password" label="Password" autocomplete="new-password" />
+                    <x-auth.password name="password" label="Password" autocomplete="new-password" :show-strength="true" />
                     <x-auth.password name="password_confirmation" label="Confirm password" autocomplete="new-password" />
                 </div>
                 <button type="submit" class="mt-6 h-12 w-full rounded-xl bg-primary text-sm font-semibold text-primary-content shadow-lg shadow-primary/20 transition hover:-translate-y-0.5 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-primary/25">Create account</button>

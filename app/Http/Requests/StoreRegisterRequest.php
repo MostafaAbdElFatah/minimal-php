@@ -32,8 +32,8 @@ class StoreRegisterRequest extends FormRequest
         return [
            'first_name' => ['required', 'string', 'min:2', 'max:100'],
            'last_name' => ['required', 'string', 'min:2', 'max:100'],
-           'email' => ['required', 'string', 'max:255', 'unique:users'],
-           'password' => [Password::default(), 'confirmed'], // or 'confirmed:confirm_password'
+           'email' => ['required', 'string', 'email', 'max:255'],
+           'password' => ['required', 'string', 'confirmed', Password::default()], // or 'confirmed:confirm_password'
         ];
     }
 }
