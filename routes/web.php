@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\RegisterUserController;
 use App\Http\Controllers\IdeaController;
 use Illuminate\Support\Facades\Route;
 
@@ -10,13 +11,6 @@ Route::view('/welcome', 'welcome', [
     'name' => request('name', 'Guest'),
     'tasks' => ['Task 1', 'Task 2', 'Task 3'],
 ]);
-
-// ==============================================================
-//       Auth routes
-// ==============================================================
-
-Route::view('/login', 'auth.login');
-Route::view('/register', 'auth.register');
 
 
 // ==============================================================
@@ -35,3 +29,12 @@ Route::get('/ideas/{idea}/edit', [IdeaController::class, 'edit']);
 Route::put('/ideas/{idea}', [IdeaController::class, 'update']);
 Route::delete('/ideas/{idea}', [IdeaController::class, 'destroy']);
 Route::delete('/ideas', [IdeaController::class, 'destroyAll'])->name('ideas.destroy-all');
+
+// ==============================================================
+//       Auth routes
+// ==============================================================
+
+Route::get('/login', []);
+Route::get('/register', [RegisterUserController::class, 'create']);
+Route::post('/register', [RegisterUserController::class, 'store']);
+

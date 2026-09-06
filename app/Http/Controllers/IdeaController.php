@@ -11,8 +11,7 @@ class IdeaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
+    public function index() {
         // session()->get('ideas', []);
         // $ideas = DB::table('ideas')->get();
         // $ideas = Idea::all()
@@ -39,8 +38,7 @@ class IdeaController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(IdeaRequest $request)
-    {
+    public function store(IdeaRequest $request) {
         // $request = request();
         // $request->merge([
         //     'title' => trim($request->input('title', '')),
@@ -83,8 +81,7 @@ class IdeaController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Idea $idea)
-    {
+    public function show(Idea $idea) {
         // $idea = Idea::findOrFail($id);
         return view('ideas.show', ['idea' => $idea]);
     }
@@ -92,8 +89,7 @@ class IdeaController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Idea $idea)
-    {
+    public function edit(Idea $idea) {
         // $idea = Idea::findOrFail($id);
         return view('ideas.edit', ['idea' => $idea]);
     }
@@ -101,8 +97,7 @@ class IdeaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(IdeaRequest $request, Idea $idea)
-    {
+    public function update(IdeaRequest $request, Idea $idea) {
         // $request = request();
         // $request->merge([
         //     'title' => trim($request->input('title', '')),
@@ -144,8 +139,7 @@ class IdeaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Idea $idea)
-    {
+    public function destroy(Idea $idea) {
         // $idea = Idea::findOrFail($id);
         $idea->delete();
 
@@ -155,8 +149,7 @@ class IdeaController extends Controller
     /**
      * Remove all ideas from storage.
      */
-    public function destroyAll(): RedirectResponse
-    {
+    public function destroyAll(): RedirectResponse {
         Idea::query()->delete();
 
         return redirect('/')->with('status', 'All ideas deleted successfully!');

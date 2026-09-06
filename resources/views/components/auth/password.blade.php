@@ -1,6 +1,7 @@
 @props([
     'name' => 'password',
     'label' => 'Password',
+    'value' => null,
     'autocomplete' => 'current-password',
 ])
 
@@ -10,6 +11,7 @@
         <input
             id="{{ $name }}"
             name="{{ $name }}"
+            value="{{ old($name, $value) }}"
             type="password"
             autocomplete="{{ $autocomplete }}"
             required
