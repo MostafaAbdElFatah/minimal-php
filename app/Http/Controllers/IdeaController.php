@@ -18,10 +18,21 @@ class IdeaController extends Controller
         // $ideas = DB::table('ideas')->get();
         // $ideas = Idea::all()
 
-        $ideas = Idea::query()
-            ->when(request('state'), function ($query, $state) {
-                $query->where('state', $state);
-            })
+        // $ideas = Idea::query()
+        //     ->where(['user_id' => Auth::id()])
+        //     ->when(request('state'), function ($query, $state) {
+        //         $query->where('state', $state);
+        //     })
+        //     ->get();
+
+        // $ideas = Idea::query()
+        //     ->where('user_id', Auth::id())
+        //     ->when(request()->query('state'), fn($query, $state) => $query->where('state', $state))
+        //     ->get();
+
+        $ideas = Auth::user()
+            ->ideas()
+            ->when(request('state'), fn ($query, $state) => $query->where('state', $state))
             ->get();
 
         return view('ideas.index', [
@@ -72,7 +83,14 @@ class IdeaController extends Controller
         $state = request('state');
         // Handle form submission logic here
         // session()->push('ideas', $idea);
-        $idea = Idea::create([
+        // $idea = Idea::create([
+        //     'title' => $title,
+        //     'description' => $description,
+        //     'state' => $state,
+        //     'user_id' => Auth::id(),
+        // ]);
+
+        Auth::user()->ideas()->create([
             'title' => $title,
             'description' => $description,
             'state' => $state,

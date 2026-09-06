@@ -37,9 +37,6 @@
     <x-idea.status-filter />
 
     <div class="text-white">
-        <p class="mt-4 text-sm text-gray-400">
-            {{ $ideas->count() }} {{ $ideas->count() === 1 ? 'result' : 'results' }}
-        </p>
         <ul class="mt-4 grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-6">
             @forelse ($ideas as $idea)
                 <x-idea.idea-card :idea="$idea" />
