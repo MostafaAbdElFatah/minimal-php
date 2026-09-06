@@ -4,7 +4,6 @@
 namespace App\Http\Controllers\Auth;
 
 
-use Illuminate\Validation\Rules\Password;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;

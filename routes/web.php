@@ -14,32 +14,45 @@ Route::view('/welcome', 'welcome', [
 ]);
 
 
-// ==============================================================
-//       Ideas routes
-// ==============================================================
+Route::middleware('guest')->group(function () {
+    // ==============================================================
+    //       Auth routes
+    // ==============================================================
 
-// Route::delete('/delete-ideas', function () {
-//     session()->forget('ideas');
-//     return redirect('/')->with('status', 'All ideas deleted successfully!');
-// });
-Route::get('/', [IdeaController::class, 'index'])->name('home');
-Route::get('/ideas/create', [IdeaController::class, 'create']);
-Route::post('/ideas/create', [IdeaController::class, 'store']);
-Route::get('/ideas/{idea}', [IdeaController::class, 'show']);
-Route::get('/ideas/{idea}/edit', [IdeaController::class, 'edit']);
-Route::put('/ideas/{idea}', [IdeaController::class, 'update']);
-Route::delete('/ideas/{idea}', [IdeaController::class, 'destroy']);
-Route::delete('/ideas', [IdeaController::class, 'destroyAll'])->name('ideas.destroy-all');
+    Route::get('/login', []);
+    Route::get('/register', [RegisterUserController::class, 'create'])
+        ->name('register');
+    Route::post('/register', [RegisterUserController::class, 'store']);
+    Route::get('/login', [SessionsController::class, 'create'])
+        ->name('login');
+    Route::post('/login', [SessionsController::class, 'store']);
+});
 
-// ==============================================================
-//       Auth routes
-// ==============================================================
 
-Route::get('/login', []);
-Route::get('/register', [RegisterUserController::class, 'create'])->name('register');
-Route::post('/register', [RegisterUserController::class, 'store']);
-Route::get('/login', [SessionsController::class, 'create'])->name('login');
-Route::post('/login', [SessionsController::class, 'store']);
-Route::delete('/logout', [SessionsController::class, 'destroy'])
-    ->middleware('auth')
-    ->name('logout');
+Route::middleware('auth')->group(function () {
+
+    // ==============================================================
+    //       Ideas routes
+    // ==============================================================
+
+    // Route::delete('/delete-ideas', function () {
+    //     session()->forget('ideas');
+    //     return redirect('/')->with('status', 'All ideas deleted successfully!');
+    // });
+    Route::get('/', [IdeaController::class, 'index'])
+        ->name('home');
+    Route::get('/ideas/create', [IdeaController::class, 'create']);
+    Route::post('/ideas/create', [IdeaController::class, 'store']);
+    Route::get('/ideas/{idea}', [IdeaController::class, 'show']);
+    Route::get('/ideas/{idea}/edit', [IdeaController::class, 'edit']);
+    Route::put('/ideas/{idea}', [IdeaController::class, 'update']);
+    Route::delete('/ideas/{idea}', [IdeaController::class, 'destroy']);
+    Route::delete('/ideas', [IdeaController::class, 'destroyAll'])->name('ideas.destroy-all');
+
+    // ==============================================================
+    //       Auth routes
+    // ==============================================================
+
+    Route::delete('/logout', [SessionsController::class, 'destroy'])
+        ->name('logout');
+});
