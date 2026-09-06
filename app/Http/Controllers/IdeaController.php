@@ -6,6 +6,8 @@ use App\Http\Requests\IdeaRequest;
 use App\Models\Idea;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
+
 
 class IdeaController extends Controller
 {
@@ -105,6 +107,7 @@ class IdeaController extends Controller
      */
     public function show(Idea $idea)
     {
+        Gate::authorize('view', $idea);
         // $idea = Idea::findOrFail($id);
         return view('ideas.show', ['idea' => $idea]);
     }
@@ -114,6 +117,7 @@ class IdeaController extends Controller
      */
     public function edit(Idea $idea)
     {
+        Gate::authorize('update', $idea);
         // $idea = Idea::findOrFail($id);
         return view('ideas.edit', ['idea' => $idea]);
     }
@@ -123,6 +127,7 @@ class IdeaController extends Controller
      */
     public function update(IdeaRequest $request, Idea $idea)
     {
+        Gate::authorize('update', $idea);
         // $request = request();
         // $request->merge([
         //     'title' => trim($request->input('title', '')),
@@ -166,6 +171,7 @@ class IdeaController extends Controller
      */
     public function destroy(Idea $idea)
     {
+        Gate::authorize('delete', $idea);
         // $idea = Idea::findOrFail($id);
         $idea->delete();
 
@@ -178,7 +184,6 @@ class IdeaController extends Controller
     public function destroyAll(): RedirectResponse
     {
         Idea::query()->delete();
-
         return redirect('/')->with('status', 'All ideas deleted successfully!');
     }
 }

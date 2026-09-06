@@ -23,7 +23,11 @@
 
             <ul class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
                 <li><a href="/">Home</a></li>
-
+                 @can('view-admin')
+                    <li><a href="/admin">Admin</a></li>
+                @endcan
+                <li><a href="/about">About</a></li>
+                <li><a href="/contact">Contact</a></li>
                 <li>
                     <a>Ideas</a>
                     <ul class="p-2">
@@ -31,8 +35,7 @@
                     </ul>
                 </li>
 
-                <li><a href="/about">About</a></li>
-                <li><a href="/contact">Contact</a></li>
+
             </ul>
         </div>
 
@@ -44,8 +47,7 @@
     <div class="navbar-center hidden lg:flex">
         <ul class="menu menu-horizontal px-1">
            <li><a href="/">Home</a></li>
-
-            <li>
+           <li>
                 <details>
                     <summary>Ideas</summary>
 
@@ -54,7 +56,9 @@
                     </ul>
                 </details>
             </li>
-
+            @can('view-admin')
+                <li><a href="/admin">Admin</a></li>
+            @endcan
             <li><a href="/about">About</a></li>
             <li><a href="/contact">Contact</a></li>
         </ul>

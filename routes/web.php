@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\RegisterUserController;
 use App\Http\Controllers\Auth\SessionsController;
 use App\Http\Controllers\IdeaController;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/about', 'about');
@@ -44,7 +45,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/ideas/create', [IdeaController::class, 'create']);
     Route::post('/ideas/create', [IdeaController::class, 'store']);
     Route::get('/ideas/{idea}', [IdeaController::class, 'show']);
-    Route::get('/ideas/{idea}/edit', [IdeaController::class, 'edit']);
+    Route::get('/ideas/{idea}/edit', [IdeaController::class, 'edit'])->can('update', 'idea');
     Route::put('/ideas/{idea}', [IdeaController::class, 'update']);
     Route::delete('/ideas/{idea}', [IdeaController::class, 'destroy']);
     Route::delete('/ideas', [IdeaController::class, 'destroyAll'])->name('ideas.destroy-all');
@@ -56,3 +57,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/logout', [SessionsController::class, 'destroy'])
         ->name('logout');
 });
+
+
+Route::view('/admin', 'admin')->can('view-admin');
+// Route::get('/admin', function(){
+//     Gate::authorize('view-admin');
+//     return view('admin');
+// });
