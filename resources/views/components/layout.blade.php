@@ -61,10 +61,12 @@
             });
         };
 
-        menus.forEach((menu) => {
-            menu.querySelector(':scope > summary, :scope > [role="button"]')?.addEventListener('click', () => {
-                closeOtherMenus(menu);
-            });
+        document.addEventListener('click', (event) => {
+            const activeMenu = event.target.closest('[data-menu]');
+
+            if (activeMenu) {
+                closeOtherMenus(activeMenu);
+            }
         });
 
         const activeTheme = localStorage.getItem('theme') || 'dark';
