@@ -23,7 +23,7 @@ class IdeaFactory extends Factory
             'title' => fake()->sentence(4),
             'description' => fake()->paragraph(),
             'state' => fake()->randomElement(IdeaState::cases()),
-            'user_id' => User::inRandomOrder()->value('id'), // User::factory() is creating new users automatically: 
+            'user_id' => User::factory(),
         ];
     }
 }

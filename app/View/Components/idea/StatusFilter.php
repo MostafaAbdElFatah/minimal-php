@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class card extends Component
+class StatusFilter extends Component
 {
     /**
      * Create a new component instance.
@@ -21,6 +21,6 @@ class card extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.idea.idea-card');
+        return view('components.idea.status-filter');
     }
 }

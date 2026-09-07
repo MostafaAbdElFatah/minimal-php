@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class idea-status extends Component
+class IdeaStatus extends Component
 {
     /**
      * Create a new component instance.

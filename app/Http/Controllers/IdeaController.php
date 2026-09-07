@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\IdeaRequest;
 use App\Models\Idea;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -15,6 +16,9 @@ class IdeaController extends Controller
      */
     public function index()
     {
+        /** @var User $user */
+        $user = Auth::user();
+
         // session()->get('ideas', []);
         // $ideas = DB::table('ideas')->get();
         // $ideas = Idea::all()
@@ -31,7 +35,7 @@ class IdeaController extends Controller
         //     ->when(request()->query('state'), fn($query, $state) => $query->where('state', $state))
         //     ->get();
 
-        $ideas = Auth::user()
+        $ideas = $user
             ->ideas()
             ->when(request('state'), fn ($query, $state) => $query->where('state', $state))
             ->paginate(10);
@@ -52,6 +56,9 @@ class IdeaController extends Controller
      */
     public function store(IdeaRequest $request)
     {
+        /** @var User $user */
+        $user = Auth::user();
+
         // $request = request();
         // $request->merge([
         //     'title' => trim($request->input('title', '')),
@@ -89,11 +96,10 @@ class IdeaController extends Controller
         //     'user_id' => Auth::id(),
         // ]);
 
-        Auth::user()->ideas()->create([
+        $user->ideas()->create([
             'title' => $title,
             'description' => $description,
             'state' => $state,
-            'user_id' => Auth::id(),
         ]);
 
         return redirect('/')->with('status', 'Idea submitted successfully!');
@@ -182,7 +188,10 @@ class IdeaController extends Controller
      */
     public function destroyAll(): RedirectResponse
     {
-        Idea::query()->delete();
+        /** @var User $user */
+        $user = Auth::user();
+
+        $user->ideas()->delete();
 
         return redirect('/')->with('status', 'All ideas deleted successfully!');
     }
