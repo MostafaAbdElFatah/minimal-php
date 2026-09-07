@@ -52,7 +52,8 @@
         </ul>
 
         <div class="fixed inset-x-0 bottom-4 z-40 flex justify-center px-4">
-            <x-idea.pagination :paginator="$ideas" />
+            {{-- <x-idea.pagination :paginator="$ideas" /> --}}
+            {{ $ideas->links() }}
         </div>
     </div>
 </x-layout>
