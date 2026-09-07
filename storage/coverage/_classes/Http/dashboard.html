@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard for App\Http</title>
+  <link rel="stylesheet" href="../../_css/style.css?v=14.3.2">
+  <link rel="stylesheet" href="../../_css/custom.css">
+ </head>
+ <body>
+  <header class="masthead">
+   <nav aria-label="Breadcrumb">
+    <ol class="breadcrumbs">
+     <li><a href="../index.html">App</a></li>
+     <li><a href="index.html">Http</a></li>
+     <li class="current">Dashboard</li>
+    </ol>
+   </nav>
+   <ul class="tabs">
+    <li><a href="../../dashboard.html">Files</a></li>
+    <li><a href="../../_classes/index.html" aria-current="page">Classes</a></li>
+   </ul>
+  </header>
+  <main class="dashboard">
+   <section>
+    <h2>Classes</h2>
+    <div class="panel">
+     <div class="chart">
+      <p class="hint">Line coverage against cyclomatic complexity. Bubble size is the number of executable lines; hover for details, click to navigate.</p>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--coverage-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--coverage-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--coverage-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--text); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--border); stroke-width: 1; }
+  .chart-label { fill: var(--text); font-size: 11px; font-family: var(--font-sans); }
+  .chart-title { fill: var(--text); font-size: 12px; font-family: var(--font-sans); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="284.0" x2="780" y2="284.0" class="chart-grid"/>
+ <text x="52" y="284.0" text-anchor="end" dominant-baseline="middle" class="chart-label">2</text>
+ <line x1="60" y1="218.0" x2="780" y2="218.0" class="chart-grid"/>
+ <text x="52" y="218.0" text-anchor="end" dominant-baseline="middle" class="chart-label">4</text>
+ <line x1="60" y1="152.0" x2="780" y2="152.0" class="chart-grid"/>
+ <text x="52" y="152.0" text-anchor="end" dominant-baseline="middle" class="chart-label">6</text>
+ <line x1="60" y1="86.0" x2="780" y2="86.0" class="chart-grid"/>
+ <text x="52" y="86.0" text-anchor="end" dominant-baseline="middle" class="chart-label">8</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">10</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="../../Http/Controllers/IdeaController.php.html#12"><circle cx="737.6" cy="86.0" r="20.0" class="bubble-success"><title>App\Http\Controllers\IdeaController — Coverage: 94.1% | Lines: 34 | Complexity: 8</title></circle></a>
+ <a href="../../Http/Requests/IdeaRequest.php.html#8"><circle cx="780.0" cy="251.0" r="16.8" class="bubble-success"><title>App\Http\Requests\IdeaRequest — Coverage: 100.0% | Lines: 24 | Complexity: 3</title></circle></a>
+ <a href="../../Http/Controllers/Auth/SessionsController.php.html#12"><circle cx="780.0" cy="218.0" r="15.0" class="bubble-success"><title>App\Http\Controllers\Auth\SessionsController — Coverage: 100.0% | Lines: 19 | Complexity: 4</title></circle></a>
+ <a href="../../Http/Requests/StoreRegisterRequest.php.html#8"><circle cx="780.0" cy="284.0" r="12.4" class="bubble-success"><title>App\Http\Requests\StoreRegisterRequest — Coverage: 100.0% | Lines: 13 | Complexity: 2</title></circle></a>
+ <a href="../../Http/Controllers/Auth/RegisterUserController.php.html#10"><circle cx="780.0" cy="284.0" r="6.9" class="bubble-success"><title>App\Http\Controllers\Auth\RegisterUserController — Coverage: 100.0% | Lines: 4 | Complexity: 2</title></circle></a>
+</svg>
+     </div>
+     <div>
+      <p class="hint">Sorted by descending <abbr title="Change Risk Anti-Patterns">CRAP</abbr> index.</p>
+      <div class="scrollbox">
+     <table class="crap">
+      <thead>
+       <tr>
+        <th scope="col">Class</th>
+        <th scope="col" class="number"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        <th scope="col" class="number">Coverage</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr><td><a href="../../Http/Controllers/IdeaController.php.html#12">App\Http\Controllers\IdeaController</a></td><td class="number">8.01</td><td class="number">94.1%</td></tr>
+       <tr><td><a href="../../Http/Controllers/Auth/SessionsController.php.html#12">App\Http\Controllers\Auth\SessionsController</a></td><td class="number">4</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../Http/Requests/IdeaRequest.php.html#8">App\Http\Requests\IdeaRequest</a></td><td class="number">3</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../Http/Controllers/Auth/RegisterUserController.php.html#10">App\Http\Controllers\Auth\RegisterUserController</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../Http/Requests/StoreRegisterRequest.php.html#8">App\Http\Requests\StoreRegisterRequest</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../Http/Controllers/Controller.php.html#5">App\Http\Controllers\Controller</a></td><td class="number">0</td><td class="number">100.0%</td></tr>
+      </tbody>
+     </table>
+      </div>
+     </div>
+    </div>
+   </section>
+   <section>
+    <h2>Methods</h2>
+    <div class="panel">
+     <div class="chart">
+      <p class="hint">Line coverage against cyclomatic complexity. Bubble size is the number of executable lines; hover for details, click to navigate.</p>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+ <style>
+  .bubble-success { fill: var(--coverage-success-bar); opacity: 0.7; }
+  .bubble-warning { fill: var(--coverage-warning-bar); opacity: 0.7; }
+  .bubble-danger { fill: var(--coverage-danger-bar); opacity: 0.7; }
+  .bubble-success:hover, .bubble-warning:hover, .bubble-danger:hover { opacity: 1; stroke: var(--text); stroke-width: 1.5; }
+  .chart-grid { stroke: var(--border); stroke-width: 0.5; stroke-dasharray: 4,4; opacity: 0.5; }
+  .chart-axis { stroke: var(--border); stroke-width: 1; }
+  .chart-label { fill: var(--text); font-size: 11px; font-family: var(--font-sans); }
+  .chart-title { fill: var(--text); font-size: 12px; font-family: var(--font-sans); }
+ </style>
+ <line x1="60.0" y1="20" x2="60.0" y2="350" class="chart-grid"/>
+ <text x="60.0" y="368" text-anchor="middle" class="chart-label">0%</text>
+ <line x1="204.0" y1="20" x2="204.0" y2="350" class="chart-grid"/>
+ <text x="204.0" y="368" text-anchor="middle" class="chart-label">20%</text>
+ <line x1="348.0" y1="20" x2="348.0" y2="350" class="chart-grid"/>
+ <text x="348.0" y="368" text-anchor="middle" class="chart-label">40%</text>
+ <line x1="492.0" y1="20" x2="492.0" y2="350" class="chart-grid"/>
+ <text x="492.0" y="368" text-anchor="middle" class="chart-label">60%</text>
+ <line x1="636.0" y1="20" x2="636.0" y2="350" class="chart-grid"/>
+ <text x="636.0" y="368" text-anchor="middle" class="chart-label">80%</text>
+ <line x1="780.0" y1="20" x2="780.0" y2="350" class="chart-grid"/>
+ <text x="780.0" y="368" text-anchor="middle" class="chart-label">100%</text>
+ <line x1="60" y1="350.0" x2="780" y2="350.0" class="chart-grid"/>
+ <text x="52" y="350.0" text-anchor="end" dominant-baseline="middle" class="chart-label">0</text>
+ <line x1="60" y1="240.0" x2="780" y2="240.0" class="chart-grid"/>
+ <text x="52" y="240.0" text-anchor="end" dominant-baseline="middle" class="chart-label">1</text>
+ <line x1="60" y1="130.0" x2="780" y2="130.0" class="chart-grid"/>
+ <text x="52" y="130.0" text-anchor="end" dominant-baseline="middle" class="chart-label">2</text>
+ <line x1="60" y1="20.0" x2="780" y2="20.0" class="chart-grid"/>
+ <text x="52" y="20.0" text-anchor="end" dominant-baseline="middle" class="chart-label">3</text>
+ <line x1="60" y1="20" x2="60" y2="350" class="chart-axis"/>
+ <line x1="60" y1="350" x2="780" y2="350" class="chart-axis"/>
+ <text x="420.0" y="395" text-anchor="middle" class="chart-title">Line Coverage (%)</text>
+ <text x="15" y="185.0" text-anchor="middle" transform="rotate(-90, 15, 185.0)" class="chart-title">Cyclomatic Complexity</text>
+ <a href="../../Http/Requests/IdeaRequest.php.html#36"><circle cx="780.0" cy="240.0" r="20.0" class="bubble-success"><title>App\Http\Requests\IdeaRequest::rules — Coverage: 100.0% | Lines: 18 | Complexity: 1</title></circle></a>
+ <a href="../../Http/Controllers/Auth/SessionsController.php.html#26"><circle cx="780.0" cy="130.0" r="17.6" class="bubble-success"><title>App\Http\Controllers\Auth\SessionsController::store — Coverage: 100.0% | Lines: 14 | Complexity: 2</title></circle></a>
+ <a href="../../Http/Controllers/IdeaController.php.html#57"><circle cx="780.0" cy="240.0" r="14.9" class="bubble-success"><title>App\Http\Controllers\IdeaController::store — Coverage: 100.0% | Lines: 10 | Complexity: 1</title></circle></a>
+ <a href="../../Http/Controllers/IdeaController.php.html#133"><circle cx="780.0" cy="240.0" r="12.5" class="bubble-success"><title>App\Http\Controllers\IdeaController::update — Coverage: 100.0% | Lines: 7 | Complexity: 1</title></circle></a>
+ <a href="../../Http/Requests/StoreRegisterRequest.php.html#13"><circle cx="780.0" cy="240.0" r="12.5" class="bubble-success"><title>App\Http\Requests\StoreRegisterRequest::prepareForValidation — Coverage: 100.0% | Lines: 7 | Complexity: 1</title></circle></a>
+ <a href="../../Http/Controllers/IdeaController.php.html#17"><circle cx="780.0" cy="240.0" r="11.5" class="bubble-success"><title>App\Http\Controllers\IdeaController::index — Coverage: 100.0% | Lines: 6 | Complexity: 1</title></circle></a>
+ <a href="../../Http/Requests/StoreRegisterRequest.php.html#29"><circle cx="780.0" cy="240.0" r="11.5" class="bubble-success"><title>App\Http\Requests\StoreRegisterRequest::rules — Coverage: 100.0% | Lines: 6 | Complexity: 1</title></circle></a>
+ <a href="../../Http/Requests/IdeaRequest.php.html#21"><circle cx="780.0" cy="240.0" r="10.5" class="bubble-success"><title>App\Http\Requests\IdeaRequest::prepareForValidation — Coverage: 100.0% | Lines: 5 | Complexity: 1</title></circle></a>
+ <a href="../../Http/Controllers/Auth/SessionsController.php.html#51"><circle cx="780.0" cy="240.0" r="9.4" class="bubble-success"><title>App\Http\Controllers\Auth\SessionsController::destroy — Coverage: 100.0% | Lines: 4 | Complexity: 1</title></circle></a>
+ <a href="../../Http/Controllers/IdeaController.php.html#177"><circle cx="780.0" cy="240.0" r="8.2" class="bubble-success"><title>App\Http\Controllers\IdeaController::destroy — Coverage: 100.0% | Lines: 3 | Complexity: 1</title></circle></a>
+ <a href="../../Http/Controllers/IdeaController.php.html#189"><circle cx="780.0" cy="240.0" r="8.2" class="bubble-success"><title>App\Http\Controllers\IdeaController::destroyAll — Coverage: 100.0% | Lines: 3 | Complexity: 1</title></circle></a>
+ <a href="../../Http/Controllers/Auth/RegisterUserController.php.html#17"><circle cx="780.0" cy="240.0" r="8.2" class="bubble-success"><title>App\Http\Controllers\Auth\RegisterUserController::store — Coverage: 100.0% | Lines: 3 | Complexity: 1</title></circle></a>
+ <a href="../../Http/Controllers/IdeaController.php.html#111"><circle cx="780.0" cy="240.0" r="6.7" class="bubble-success"><title>App\Http\Controllers\IdeaController::show — Coverage: 100.0% | Lines: 2 | Complexity: 1</title></circle></a>
+ <a href="../../Http/Controllers/IdeaController.php.html#122"><circle cx="60.0" cy="240.0" r="6.7" class="bubble-danger"><title>App\Http\Controllers\IdeaController::edit — Coverage: 0.0% | Lines: 2 | Complexity: 1</title></circle></a>
+ <a href="../../Http/Controllers/IdeaController.php.html#49"><circle cx="780.0" cy="240.0" r="4.7" class="bubble-success"><title>App\Http\Controllers\IdeaController::create — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../Http/Controllers/Auth/RegisterUserController.php.html#12"><circle cx="780.0" cy="240.0" r="4.7" class="bubble-success"><title>App\Http\Controllers\Auth\RegisterUserController::create — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../Http/Controllers/Auth/SessionsController.php.html#18"><circle cx="780.0" cy="240.0" r="4.7" class="bubble-success"><title>App\Http\Controllers\Auth\SessionsController::create — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+ <a href="../../Http/Requests/IdeaRequest.php.html#13"><circle cx="780.0" cy="240.0" r="4.7" class="bubble-success"><title>App\Http\Requests\IdeaRequest::authorize — Coverage: 100.0% | Lines: 1 | Complexity: 1</title></circle></a>
+</svg>
+     </div>
+     <div>
+      <p class="hint">Sorted by descending <abbr title="Change Risk Anti-Patterns">CRAP</abbr> index.</p>
+      <div class="scrollbox">
+     <table class="crap">
+      <thead>
+       <tr>
+        <th scope="col">Method</th>
+        <th scope="col" class="number"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        <th scope="col" class="number">Coverage</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr><td><a href="../../Http/Controllers/IdeaController.php.html#122">App\Http\Controllers\IdeaController::edit</a></td><td class="number">2</td><td class="number">0.0%</td></tr>
+       <tr><td><a href="../../Http/Controllers/Auth/SessionsController.php.html#26">App\Http\Controllers\Auth\SessionsController::store</a></td><td class="number">2</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../Http/Controllers/IdeaController.php.html#17">App\Http\Controllers\IdeaController::index</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../Http/Controllers/IdeaController.php.html#49">App\Http\Controllers\IdeaController::create</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../Http/Controllers/IdeaController.php.html#57">App\Http\Controllers\IdeaController::store</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../Http/Controllers/IdeaController.php.html#111">App\Http\Controllers\IdeaController::show</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../Http/Controllers/IdeaController.php.html#133">App\Http\Controllers\IdeaController::update</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../Http/Controllers/IdeaController.php.html#177">App\Http\Controllers\IdeaController::destroy</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../Http/Controllers/IdeaController.php.html#189">App\Http\Controllers\IdeaController::destroyAll</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../Http/Controllers/Auth/RegisterUserController.php.html#12">App\Http\Controllers\Auth\RegisterUserController::create</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../Http/Controllers/Auth/RegisterUserController.php.html#17">App\Http\Controllers\Auth\RegisterUserController::store</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../Http/Controllers/Auth/SessionsController.php.html#18">App\Http\Controllers\Auth\SessionsController::create</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../Http/Controllers/Auth/SessionsController.php.html#51">App\Http\Controllers\Auth\SessionsController::destroy</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../Http/Requests/IdeaRequest.php.html#13">App\Http\Requests\IdeaRequest::authorize</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../Http/Requests/IdeaRequest.php.html#21">App\Http\Requests\IdeaRequest::prepareForValidation</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../Http/Requests/IdeaRequest.php.html#36">App\Http\Requests\IdeaRequest::rules</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../Http/Requests/StoreRegisterRequest.php.html#13">App\Http\Requests\StoreRegisterRequest::prepareForValidation</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+       <tr><td><a href="../../Http/Requests/StoreRegisterRequest.php.html#29">App\Http\Requests\StoreRegisterRequest::rules</a></td><td class="number">1</td><td class="number">100.0%</td></tr>
+      </tbody>
+     </table>
+      </div>
+     </div>
+    </div>
+   </section>
+  </main>
+  <footer>
+   <p class="credits">Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 14.3.2</a> using <a href="https://www.php.net/" target="_top">PHP 8.5.10</a> and <a href="https://phpunit.de/">PHPUnit 13.3.1</a> at Mon Sep 7 7:41:08 UTC 2026.</p>
+  </footer>
+ </body>
+</html>
