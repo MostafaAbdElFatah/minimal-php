@@ -16,7 +16,7 @@
             @if ($ideas->count() > 0)
                 <form
                     method="POST"
-                    action="{{ route('ideas.destroy-all') }}"
+                    action="/ideas"
                     onsubmit="return confirm('Are you sure you want to delete all ideas? This action cannot be undone.')"
                 >
                     @csrf

@@ -35,7 +35,7 @@ class IdeaController extends Controller
         $ideas = Auth::user()
             ->ideas()
             ->when(request('state'), fn ($query, $state) => $query->where('state', $state))
-            ->get();
+            ->paginate();
 
         return view('ideas.index', [
             'ideas' => $ideas,
