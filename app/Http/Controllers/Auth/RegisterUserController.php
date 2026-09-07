@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Models\User;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRegisterRequest;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Symfony\Component\Console\Input\Input;
 
 class RegisterUserController extends Controller
 {
@@ -18,14 +16,10 @@ class RegisterUserController extends Controller
 
     public function store(StoreRegisterRequest $request)
     {
-        $user = User::create([
-            'first_name' => $request['first_name'],
-            'last_name' => $request['last_name'],
-            'email' => $request['email'],
-            'password' => Hash::make($request['password']),
-        ]);
+        $user = User::create($request->validated());
 
         Auth::login($user);
+
         return redirect('/')->with('status', 'Account created successfully!');
     }
 }
