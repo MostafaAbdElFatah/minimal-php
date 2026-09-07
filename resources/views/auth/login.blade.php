@@ -23,7 +23,7 @@
                 <div class="mt-4 flex justify-end">
                     <a href="#" class="text-xs font-semibold text-primary transition hover:text-primary/70">Forgot password?</a>
                 </div>
-                <button type="submit" class="mt-6 h-12 w-full rounded-xl bg-primary text-sm font-semibold text-primary-content shadow-lg shadow-primary/20 transition hover:-translate-y-0.5 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-primary/25">Sign in</button>
+                <button type="submit" data-test="login" class="mt-6 h-12 w-full rounded-xl bg-primary text-sm font-semibold text-primary-content shadow-lg shadow-primary/20 transition hover:-translate-y-0.5 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-primary/25">Sign in</button>
                 <p class="mt-6 text-center text-sm text-base-content/60">
                     New to IdeaHub?
                     <a href="/register" class="font-semibold text-primary hover:underline">Create an account</a>

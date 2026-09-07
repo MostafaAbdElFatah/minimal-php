@@ -37,7 +37,7 @@ class SessionsController extends Controller
 
         if (! Auth::attempt($credentials, $request->boolean('remember'))) {
             return back()->withErrors([
-                'email' => 'The provided credentials do not match our records.',
+                'email' => 'These credentials do not match our records.',
             ])->onlyInput('email');
         }
 

@@ -32,7 +32,7 @@
                     @csrf
                     @method('DELETE')
 
-                    <button type="submit" class="w-full text-left">
+                    <button type="submit" data-test="Logout" class="w-full text-left">
                         Logout
                     </button>
                 </form>
