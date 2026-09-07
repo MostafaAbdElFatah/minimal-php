@@ -45,7 +45,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/ideas/create', [IdeaController::class, 'create']);
     Route::post('/ideas/create', [IdeaController::class, 'store']);
     Route::get('/ideas/{idea}', [IdeaController::class, 'show']);
-    Route::get('/ideas/{idea}/edit', [IdeaController::class, 'edit'])->can('update', 'idea');
+    Route::get('/ideas/{idea}/edit', [IdeaController::class, 'edit'])
+        ->can('update', 'idea');
     Route::put('/ideas/{idea}', [IdeaController::class, 'update']);
     Route::delete('/ideas/{idea}', [IdeaController::class, 'destroy']);
     Route::delete('/ideas', [IdeaController::class, 'destroyAll'])->name('ideas.destroy-all');

@@ -16,6 +16,6 @@ class IdeaSeeder extends Seeder
         Idea::factory()->count(100)->create([
             'user_id' => User::inRandomOrder()->value('id'),
         ]);
-        Idea::factory()->count(20)->create(['user_id' => 2]);
+        Idea::factory()->count(200)->create(['user_id' => 2]);
     }
 }
