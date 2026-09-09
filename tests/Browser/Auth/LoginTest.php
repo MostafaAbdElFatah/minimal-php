@@ -1,63 +1,71 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Models\User;
 
 it('logs in a user with valid credentials', function () {
-    User::factory()->create([
-        'email' => 'jane@example.com',
-        'password' => bcrypt('jane-password'),
-    ]);
+    $user = User::factory()->create(['password' => 'jane-password']);
 
     visit(route('login'))
-        ->fill('email', 'jane@example.com')
+        ->assertNoJavaScriptErrors()
+        ->fill('email', $user->email)
         ->fill('password', 'jane-password')
         ->press('@login')
-        ->assertPathIs('/');
-})->group('auth', 'feature');
+        ->assertPathIs('/')
+        ->assertSee('Your')
+        ->assertSee('Ideas')
+        ->assertNoJavaScriptErrors();
+})->group('browser', 'auth');
 
-it('does not log in with an incorrect password', function () {
-    User::factory()->create([
-        'email' => 'jane@example.com',
-        'password' => bcrypt('jane-password'),
-    ]);
+it('logs in on a mobile viewport', function () {
+    $user = User::factory()->create(['password' => 'jane-password']);
 
-    visit(route('login'))
-        ->fill('email', 'jane@example.com')
-        ->fill('password', 'wrong-password')
-        ->press('@login')
-        ->assertPathIs('/login')
-        ->assertSee('These credentials do not match our records.');
-})->group('auth', 'feature');
-
-it('does not log in with an incorrect email', function () {
-    User::factory()->create([
-        'email' => 'jane@example.com',
-        'password' => bcrypt('jane-password'),
-    ]);
-
-    visit(route('login'))
-        ->fill('email', 'wrong@example.com')
+    visit(route('login'))->on()->mobile()
+        ->assertNoJavaScriptErrors()
+        ->fill('email', $user->email)
         ->fill('password', 'jane-password')
         ->press('@login')
-        ->assertPathIs('/login')
-        ->assertSee('These credentials do not match our records.');
-})->group('auth', 'feature');
+        ->assertPathIs('/')
+        ->assertNoJavaScriptErrors();
+})->group('browser', 'auth');
 
-it('does not log in when the email does not exist at all', function () {
-    // No user created — email doesn't exist in the database at all
+it('shows the generic credentials error and keeps the email', function (string $email, string $password) {
+    User::factory()->create(['email' => 'jane@example.com', 'password' => 'jane-password']);
+
     visit(route('login'))
-        ->fill('email', 'doesnotexist@example.com')
-        ->fill('password', 'any-password')
+        ->fill('email', $email)
+        ->fill('password', $password)
         ->press('@login')
         ->assertPathIs('/login')
-        ->assertSee('These credentials do not match our records.');
-})->group('auth', 'feature');
+        ->assertSee('These credentials do not match our records.')
+        ->assertValue('email', $email)
+        ->assertValue('password', '')
+        ->assertNoJavaScriptErrors();
+})->with([
+    'wrong password' => ['jane@example.com', 'wrong-password'],
+    'wrong email' => ['wrong@example.com', 'jane-password'],
+    'unknown user' => ['ghost@example.com', 'any-password'],
+])->group('browser', 'auth');
 
-it('does not log in with an empty email and password', function () {
-    visit(route('login'))
-        ->fill('email', 'as')
-        ->fill('password', 'as')
+it('shows server-side validation errors when the browser validation is bypassed', function () {
+    $page = visit(route('login'));
+    $page->script('document.querySelector("main form").noValidate = true;');
+
+    $page->fill('email', 'not-an-email')
         ->press('@login')
         ->assertPathIs('/login')
-        ->script('document.querySelector("form").noValidate = true;');
-})->group('auth', 'feature');
+        ->assertSee('The email field must be a valid email address.')
+        ->assertSee('The password field is required.')
+        ->assertNoJavaScriptErrors();
+})->group('browser', 'auth');
+
+it('toggles password visibility without leaving the page', function () {
+    visit(route('login'))
+        ->fill('password', 'visible-secret')
+        ->assertAttribute('#password', 'type', 'password')
+        ->click('[data-password-toggle="password"]')
+        ->assertAttribute('#password', 'type', 'text')
+        ->assertAttribute('[data-password-toggle="password"]', 'aria-pressed', 'true')
+        ->assertNoJavaScriptErrors();
+})->group('browser', 'auth');

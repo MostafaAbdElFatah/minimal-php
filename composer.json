@@ -25,7 +25,8 @@
         "pestphp/pest": "^5.1",
         "pestphp/pest-plugin-browser": "^5.0",
         "pestphp/pest-plugin-laravel": "^5.0",
-        "pestphp/pest-plugin-stressless": "^5.0"
+        "pestphp/pest-plugin-stressless": "^5.0",
+        "pestphp/pest-plugin-type-coverage": "^5.0"
     },
     "autoload": {
         "psr-4": {
@@ -52,9 +53,22 @@
             "Composer\\Config::disableProcessTimeout",
             "@php artisan dev"
         ],
-        "test": [
-            "@php artisan config:clear --ansi @no_additional_args",
-            "@php artisan test"
+        "test": "pest --parallel --exclude-group=stress --exclude-group=browser",
+        "test:unit": "pest --testsuite=Unit --parallel",
+        "test:feature": "pest --testsuite=Feature --parallel",
+        "test:browser": "pest --testsuite=Browser",
+        "test:arch": "pest --testsuite=Architecture",
+        "test:stress": "pest --testsuite=Stress --group=stress",
+        "test:coverage": "XDEBUG_MODE=coverage pest --parallel --exclude-group=stress --exclude-group=browser --coverage --min=90 --coverage-html=reports/coverage --coverage-clover=reports/clover.xml",
+        "test:types": "pest --type-coverage --min=100",
+        "test:mutate": "XDEBUG_MODE=coverage pest --mutate --parallel --covered-only --min=80 --exclude-group=stress --exclude-group=browser",
+        "test:mutate:models": "XDEBUG_MODE=coverage pest --mutate --covered-only --group=models --min=90",
+        "test:random": "pest --parallel --order-by=random --exclude-group=stress --exclude-group=browser",
+        "test:all": [
+            "@test:arch",
+            "@test:coverage",
+            "@test:types",
+            "@test:browser"
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",

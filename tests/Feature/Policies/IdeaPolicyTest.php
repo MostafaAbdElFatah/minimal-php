@@ -1,34 +1,41 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Models\Idea;
 use App\Models\User;
 use App\Policies\IdeaPolicy;
-use Illuminate\Auth\Access\Response;
+use Illuminate\Support\Facades\Gate;
 
-test('the policy denies viewing any idea collection', function () {
-    $policy = new IdeaPolicy;
+covers(IdeaPolicy::class);
 
-    expect($policy->viewAny(User::factory()->make()))->toBeFalse();
-});
+test('the policy is discovered for the Idea model', function () {
+    expect(Gate::getPolicyFor(Idea::class))->toBeInstanceOf(IdeaPolicy::class);
+})->group('feature', 'policies');
 
-test('the policy allows an owner to view, update, and delete their idea', function () {
-    $user = User::factory()->create();
-    $idea = Idea::factory()->for($user)->create();
-    $policy = new IdeaPolicy;
-
-    expect($policy->view($user, $idea)->allowed())->toBeTrue();
-    expect($policy->update($user, $idea)->allowed())->toBeTrue();
-    expect($policy->delete($user, $idea)->allowed())->toBeTrue();
-});
-
-test('the policy hides another user idea as not found', function () {
+test('the gate resolves each ability for each actor', function (string $actor, string $ability, bool $allowed) {
     $owner = User::factory()->create();
     $idea = Idea::factory()->for($owner)->create();
-    $otherUser = User::factory()->create();
-    $policy = new IdeaPolicy;
+    $user = match ($actor) {
+        'owner' => $owner,
+        'other user' => User::factory()->create(),
+        'guest' => null,
+    };
 
-    expect($policy->view($otherUser, $idea))->toBeInstanceOf(Response::class);
-    expect($policy->view($otherUser, $idea)->denied())->toBeTrue();
-    expect($policy->update($otherUser, $idea)->denied())->toBeTrue();
-    expect($policy->delete($otherUser, $idea)->denied())->toBeTrue();
-});
+    expect(Gate::forUser($user)->allows($ability, $idea))->toBe($allowed);
+})->with(function (): Generator {
+    foreach (['view', 'update', 'delete'] as $ability) {
+        yield "owner can {$ability}" => ['owner', $ability, true];
+        yield "other user cannot {$ability}" => ['other user', $ability, false];
+        yield "guest cannot {$ability}" => ['guest', $ability, false];
+    }
+    yield 'owner cannot viewAny' => ['owner', 'viewAny', false];
+})->group('feature', 'policies');
+
+test('a denied ability responds as not found', function () {
+    $idea = Idea::factory()->create();
+
+    $response = Gate::forUser(User::factory()->create())->inspect('view', $idea);
+
+    expect($response->denied())->toBeTrue()->and($response->status())->toBe(404);
+})->group('feature', 'policies');

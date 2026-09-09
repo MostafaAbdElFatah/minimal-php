@@ -1,146 +1,71 @@
 <?php
 
-use App\Models\Idea;
+declare(strict_types=1);
+
 use App\Models\User;
 
-it('creates an idea through the browser form', function () {
-    User::factory()->create([
-        'email' => 'ideas-create@example.com',
-        'password' => bcrypt('password'),
-    ]);
+it('creates an idea through the form', function () {
+    $user = User::factory()->create(['password' => 'password']);
 
-    visit(route('login'))
-        ->fill('email', 'ideas-create@example.com')
-        ->fill('password', 'password')
-        ->press('@login')
-        ->navigate('/ideas/create')
+    loginAs($user)
+        ->click('@new-idea')
+        ->assertPathIs('/ideas/create')
+        ->assertNoJavaScriptErrors()
         ->fill('title', 'A browser-created idea')
         ->select('state', 'active')
         ->fill('description', 'A description created through the browser form.')
-        ->press('Save')
+        ->press('@save')
         ->assertPathIs('/')
         ->assertSee('A browser-created idea')
+        ->assertSee('(1)')
         ->assertNoJavaScriptErrors();
 
-    expect(Idea::where('title', 'A browser-created idea')->exists())->toBeTrue();
-})->group('ideas', 'feature');
+    $this->assertDatabaseHas('ideas', ['title' => 'A browser-created idea', 'state' => 'active', 'user_id' => $user->id]);
+})->group('browser', 'controllers');
 
-it('does not create an idea without a title', function () {
-    User::factory()->create([
-        'email' => 'ideas-create-required-title@example.com',
-        'password' => bcrypt('password'),
-    ]);
+it('creates an idea on a mobile viewport', function () {
+    $user = User::factory()->create(['password' => 'password']);
 
-    $page = visit(route('login'))
-        ->fill('email', 'ideas-create-required-title@example.com')
-        ->fill('password', 'password')
-        ->press('@login')
-        ->navigate('/ideas/create');
-
-    $page->script('document.querySelector("form").noValidate = true;');
-    $page->fill('title', '')
-        ->fill('description', 'A valid description for the idea.')
-        ->select('state', 'active')
-        ->press('Save')
-        ->assertPathIs('/ideas/create')
-        ->assertSee('The title field is required.');
-})->group('ideas', 'feature');
-
-it('does not create an idea with a title that is too short', function () {
-    User::factory()->create([
-        'email' => 'ideas-create-short-title@example.com',
-        'password' => bcrypt('password'),
-    ]);
-
-    $page = visit(route('login'))
-        ->fill('email', 'ideas-create-short-title@example.com')
-        ->fill('password', 'password')
-        ->press('@login')
-        ->navigate('/ideas/create');
-
-    $page->fill('title', 'No')
-        ->fill('description', 'A valid description for the idea.')
-        ->select('state', 'active')
-        ->press('Save')
-        ->assertPathIs('/ideas/create')
-        ->assertSee('The title field must be at least 3 characters.');
-})->group('ideas', 'feature');
-
-it('does not create an idea without a description', function () {
-    User::factory()->create([
-        'email' => 'ideas-create-required-description@example.com',
-        'password' => bcrypt('password'),
-    ]);
-
-    $page = visit(route('login'))
-        ->fill('email', 'ideas-create-required-description@example.com')
-        ->fill('password', 'password')
-        ->press('@login')
-        ->navigate('/ideas/create');
-
-    $page->script('document.querySelector("form").noValidate = true;');
-    $page->fill('title', 'A valid idea title')
-        ->fill('description', '')
-        ->select('state', 'active')
-        ->press('Save')
-        ->assertPathIs('/ideas/create')
-        ->assertSee('The description field is required.');
-})->group('ideas', 'feature');
-
-it('does not create an idea with a description that is too short', function () {
-    User::factory()->create([
-        'email' => 'ideas-create-short-description@example.com',
-        'password' => bcrypt('password'),
-    ]);
-
-    visit(route('login'))
-        ->fill('email', 'ideas-create-short-description@example.com')
+    visit(route('login'))->on()->mobile()
+        ->fill('email', $user->email)
         ->fill('password', 'password')
         ->press('@login')
         ->navigate('/ideas/create')
-        ->fill('title', 'A valid idea title')
-        ->fill('description', 'Too short')
-        ->select('state', 'active')
-        ->press('Save')
+        ->fill('title', 'A mobile idea')
+        ->select('state', 'draft')
+        ->fill('description', 'Created from a phone-sized viewport.')
+        ->press('@save')
+        ->assertPathIs('/')
+        ->assertSee('A mobile idea')
+        ->assertNoJavaScriptErrors();
+
+    $this->assertDatabaseHas('ideas', ['title' => 'A mobile idea', 'user_id' => $user->id]);
+})->group('browser', 'controllers');
+
+it('shows the server-side message for an invalid field and keeps the input', function (array $overrides, string $message) {
+    $user = User::factory()->create(['password' => 'password']);
+    $form = ['title' => 'A valid idea title', 'description' => 'A valid description for the idea.', ...$overrides];
+
+    $page = loginAs($user)->navigate('/ideas/create')->assertPathIs('/ideas/create');
+    $page->script('document.querySelector("main form").noValidate = true;');
+    $page->fill('title', $form['title'])->fill('description', $form['description']);
+    if (($overrides['state'] ?? 'active') === '') {
+        $page->script('document.querySelector("select[name=state]").value = "";');
+    } else {
+        $page->select('state', $overrides['state'] ?? 'active');
+    }
+
+    $page->press('@save')
         ->assertPathIs('/ideas/create')
-        ->assertSee('The description field must be at least 10 characters.');
-})->group('ideas', 'feature');
+        ->assertSee($message)
+        ->assertNoJavaScriptErrors();
 
-it('does not create an idea without a state', function () {
-    User::factory()->create([
-        'email' => 'ideas-create-required-state@example.com',
-        'password' => bcrypt('password'),
-    ]);
-
-    $page = visit(route('login'))
-        ->fill('email', 'ideas-create-required-state@example.com')
-        ->fill('password', 'password')
-        ->press('@login')
-        ->navigate('/ideas/create');
-
-    $page->script('document.querySelector("form").noValidate = true; document.querySelector("select[name=state]").value = "";');
-    $page->fill('title', 'A valid idea title')
-        ->fill('description', 'A valid description for the idea.')
-        ->press('Save')
-        ->assertPathIs('/ideas/create')
-        ->assertSee('The state field is required.');
-})->group('ideas', 'feature');
-
-it('does not create an idea with a title that is too long', function () {
-    User::factory()->create([
-        'email' => 'ideas-create-long-title@example.com',
-        'password' => bcrypt('password'),
-    ]);
-
-    visit(route('login'))
-        ->fill('email', 'ideas-create-long-title@example.com')
-        ->fill('password', 'password')
-        ->press('@login')
-        ->navigate('/ideas/create')
-        ->fill('title', str_repeat('a', 256))
-        ->fill('description', 'A valid description for the idea.')
-        ->select('state', 'active')
-        ->press('Save')
-        ->assertPathIs('/ideas/create')
-        ->assertSee('The title field must not be greater than 255 characters.');
-})->group('ideas', 'feature');
+    $this->assertDatabaseCount('ideas', 0);
+})->with([
+    'missing title' => [['title' => ''], 'The title field is required.'],
+    'short title' => [['title' => 'No'], 'The title field must be at least 3 characters.'],
+    'long title' => [['title' => str_repeat('a', 256)], 'The title field must not be greater than 255 characters.'],
+    'missing description' => [['description' => ''], 'The description field is required.'],
+    'short description' => [['description' => 'Too short'], 'The description field must be at least 10 characters.'],
+    'missing state' => [['state' => ''], 'The state field is required.'],
+])->group('browser', 'controllers', 'requests');

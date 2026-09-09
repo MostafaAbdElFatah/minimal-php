@@ -1,110 +1,117 @@
 <?php
 
+declare(strict_types=1);
+
+use App\Enums\IdeaState;
+use App\Http\Controllers\IdeaController;
 use App\Models\Idea;
 use App\Models\User;
-use Tests\TestCase;
+use Illuminate\Pagination\LengthAwarePaginator;
 
-covers('App\\Http\\Controllers\\IdeaController');
+covers(IdeaController::class);
 
-test('an authenticated user owns a created idea', function () {
-    /** @var TestCase $this */
+it('lists only the authenticated users ideas with their count', function () {
     $user = User::factory()->create();
+    $mine = Idea::factory()->count(2)->for($user)->sequence(
+        ['title' => 'First idea'],
+        ['title' => 'Second idea'],
+    )->create();
+    Idea::factory()->create(['title' => 'Someone elses idea']);
 
-    /** @var TestCase $this */
-    $response = $this->actingAs($user)->post('/ideas/create', [
-        'title' => 'A useful idea',
-        'description' => 'A description that is long enough.',
-        'state' => 'active',
-    ]);
+    $response = $this->actingAs($user)->get(route('home'));
 
-    $response->assertRedirect('/');
-    $this->assertDatabaseHas('ideas', [
-        'title' => 'A useful idea',
-        'description' => 'A description that is long enough.',
-        'state' => 'active',
-        'user_id' => $user->id,
-    ]);
+    $response->assertOk()
+        ->assertViewIs('ideas.index')
+        ->assertSee('(2)')
+        ->assertSee('First idea')
+        ->assertSee('Second idea')
+        ->assertDontSee('Someone elses idea')
+        ->assertViewHas('ideas', fn (LengthAwarePaginator $ideas): bool => $ideas->pluck('id')->sort()->values()->all() === $mine->pluck('id')->sort()->values()->all());
 });
 
-test('an authenticated user can filter their ideas by state', function () {
-    /** @var TestCase $this */
-    /** @var TestCase $this */
+it('filters ideas by state', function () {
     $user = User::factory()->create();
-
-    Idea::factory()->create([
-        'user_id' => $user->id,
-        'state' => 'active',
-    ]);
-    Idea::factory()->create([
-        'user_id' => $user->id,
-        'state' => 'pending',
-    ]);
+    $active = Idea::factory()->for($user)->create(['state' => IdeaState::ACTIVE]);
+    Idea::factory()->for($user)->create(['state' => IdeaState::PENDING]);
 
     $response = $this->actingAs($user)->get('/?state=active');
 
-    $response->assertOk();
-    $response->assertViewHas('ideas', function ($ideas) {
-        return $ideas->count() === 1 && $ideas->first()->state->value === 'active';
-    });
+    $response->assertOk()
+        ->assertSee('(1)')
+        ->assertViewHas('ideas', fn (LengthAwarePaginator $ideas): bool => $ideas->count() === 1 && $ideas->first()->is($active));
 });
 
-test('an authenticated user can see the number of matching ideas', function () {
-    /** @var TestCase $this */
+it('shows the filtered empty state when no idea matches the filter', function () {
     $user = User::factory()->create();
+    Idea::factory()->for($user)->create(['state' => IdeaState::PENDING]);
 
-    Idea::factory()->count(2)->create(['user_id' => $user->id]);
-
-    $response = $this->actingAs($user)->get('/');
-
-    $response->assertOk();
-    $response->assertSee('(2)');
+    $this->actingAs($user)->get('/?state=archived')
+        ->assertOk()
+        ->assertSee('No ideas found')
+        ->assertSee('There are no ideas with the')
+        ->assertSee('archived')
+        ->assertSee('Clear Filter');
 });
 
-test('an authenticated user sees the default empty state at the bottom of the page', function () {
-    /** @var TestCase $this */
+it('returns no ideas for an unknown state instead of failing', function () {
     $user = User::factory()->create();
+    Idea::factory()->for($user)->create();
 
-    $response = $this->actingAs($user)->get('/');
-
-    $response->assertOk();
-    $response->assertSee('No ideas yet');
-    $response->assertSee('fixed bottom-4');
+    $this->actingAs($user)->get('/?state=%27%20OR%201%3D1%20--')
+        ->assertOk()
+        ->assertSee('(0)')
+        ->assertSee('No ideas found');
 });
 
-test('an authenticated user sees the filtered empty state', function () {
-    /** @var TestCase $this */
+it('shows the onboarding empty state when the user has no ideas', function () {
+    $this->actingAs(User::factory()->create())->get(route('home'))
+        ->assertOk()
+        ->assertSee('No ideas yet')
+        ->assertSee('+ Create Your First Idea')
+        ->assertDontSee('Delete All Ideas');
+});
+
+it('shows the delete all button only when ideas exist', function () {
     $user = User::factory()->create();
+    Idea::factory()->for($user)->create();
 
-    $response = $this->actingAs($user)->get('/?state=active');
-
-    $response->assertOk();
-    $response->assertSee('No ideas found');
-    $response->assertSee('There are no ideas with the');
-    $response->assertSee('active');
+    $this->actingAs($user)->get(route('home'))->assertSee('Delete All Ideas');
 });
 
-test('an authenticated user sees the styled pagination controls', function () {
-    /** @var TestCase $this */
+it('paginates ten ideas per page', function (int $total, int $lastPage) {
     $user = User::factory()->create();
+    Idea::factory()->count($total)->for($user)->create();
 
-    Idea::factory()->count(11)->create(['user_id' => $user->id]);
+    $response = $this->actingAs($user)->get(route('home'));
 
-    $response = $this->actingAs($user)->get('/');
+    $response->assertOk()->assertViewHas('ideas', fn (LengthAwarePaginator $ideas): bool => $ideas->perPage() === 10
+        && $ideas->total() === $total
+        && $ideas->lastPage() === $lastPage);
+})->with('idea page sizes');
 
-    $response->assertOk();
-    $response->assertSee('aria-label="Pagination"', false);
-    $response->assertSee('aria-label="Next page"', false);
-    $response->assertSee('aria-current="page"', false);
-});
-
-test('the idea index paginates ten ideas per page', function () {
-    /** @var TestCase $this */
+it('renders pagination controls when there is more than one page', function () {
     $user = User::factory()->create();
     Idea::factory()->count(11)->for($user)->create();
 
-    $response = $this->actingAs($user)->get('/');
+    $this->actingAs($user)->get(route('home'))
+        ->assertSee('aria-label="Pagination"', false)
+        ->assertSee('aria-label="Next page"', false)
+        ->assertSee('aria-current="page"', false);
+});
 
-    $response->assertOk()->assertViewHas('ideas', function ($ideas) {
-        return $ideas->perPage() === 10;
-    });
+it('escapes idea titles and descriptions in the list', function () {
+    $user = User::factory()->create();
+    Idea::factory()->for($user)->create([
+        'title' => '<b>bold</b> title',
+        'description' => '<script>alert(1)</script> description',
+    ]);
+
+    $this->actingAs($user)->get(route('home'))
+        ->assertDontSee('<b>bold</b>', false)
+        ->assertDontSee('<script>alert(1)</script>', false)
+        ->assertSee('&lt;b&gt;bold&lt;/b&gt;', false);
+});
+
+it('redirects guests to the login page', function () {
+    $this->get(route('home'))->assertRedirect(route('login'));
 });

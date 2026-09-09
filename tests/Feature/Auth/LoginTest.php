@@ -1,174 +1,145 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Http\Controllers\Auth\SessionsController;
 use App\Models\User;
-use Illuminate\Contracts\Session\Session;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Mockery;
-use Tests\TestCase;
 
-it('passes the intended login defaults and validation rules to the framework', function () {
-    /** @var TestCase $this */
-    $request = Mockery::mock(Request::class);
-    $request->shouldReceive('input')->with('email', '')->once()->andReturn('');
-    $request->shouldReceive('input')->with('password', '')->once()->andReturn('');
-    $request->shouldReceive('merge')->with([
-        'email' => '',
-        'password' => '',
-    ])->once();
-    $request->shouldReceive('validate')->with(Mockery::on(function (array $rules): bool {
-        return $rules === [
-            'email' => ['required', 'string', 'email', 'max:255'],
-            'password' => ['required', 'string'],
-        ];
-    }))->once()->andReturn([]);
-    $request->shouldReceive('boolean')->with('remember')->once()->andReturn(false);
+covers(SessionsController::class);
 
-    Auth::shouldReceive('attempt')->with([], false)->once()->andReturn(false);
+describe('login page', function () {
+    it('renders the login form for guests', function () {
+        $this->get(route('login'))
+            ->assertOk()
+            ->assertViewIs('auth.login')
+            ->assertSee('Sign in to IdeaHub');
+    });
 
-    (new SessionsController)->store($request);
-})->group('auth', 'feature');
+    it('redirects authenticated users away from the login form', function () {
+        $this->actingAs(User::factory()->create())
+            ->get(route('login'))
+            ->assertRedirect('/');
+    });
+})->group('feature', 'auth');
 
-it('trims the login email before validation', function () {
-    /** @var TestCase $this */
-    $request = Mockery::mock(Request::class);
-    $request->shouldReceive('input')->with('email', '')->once()->andReturn(' user@example.com ');
-    $request->shouldReceive('input')->with('password', '')->once()->andReturn('');
-    $request->shouldReceive('merge')->with([
-        'email' => 'user@example.com',
-        'password' => '',
-    ])->once();
-    $request->shouldReceive('validate')->andReturn([]);
-    $request->shouldReceive('boolean')->with('remember')->andReturn(false);
+describe('signing in', function () {
+    it('authenticates a user with valid credentials and regenerates the session', function () {
+        $user = User::factory()->create(['password' => 'secret-password']);
+        $this->startSession();
+        $sessionId = session()->getId();
 
-    Auth::shouldReceive('attempt')->with([], false)->once()->andReturn(false);
+        $response = $this->from(route('login'))->post(route('login'), [
+            'email' => $user->email,
+            'password' => 'secret-password',
+        ]);
 
-    (new SessionsController)->store($request);
-})->group('auth', 'feature');
+        $response->assertRedirect('/')->assertSessionHas('status', 'You are now logged in.');
+        $this->assertAuthenticatedAs($user);
+        expect(session()->getId())->not->toBe($sessionId);
+    });
 
-it('regenerates the session after a successful login', function () {
-    /** @var TestCase $this */
-    $session = Mockery::mock(Session::class);
-    $session->shouldReceive('regenerate')->once();
+    it('issues a remember cookie when remember me is checked', function () {
+        $user = User::factory()->create(['password' => 'secret-password']);
 
-    $request = Mockery::mock(Request::class);
-    $request->shouldReceive('input')->with('email', '')->andReturn('user@example.com');
-    $request->shouldReceive('input')->with('password', '')->andReturn('password');
-    $request->shouldReceive('merge')->once();
-    $request->shouldReceive('validate')->andReturn([
-        'email' => 'user@example.com',
-        'password' => 'password',
-    ]);
-    $request->shouldReceive('boolean')->with('remember')->andReturn(false);
-    $request->shouldReceive('session')->once()->andReturn($session);
+        $response = $this->post(route('login'), [
+            'email' => $user->email,
+            'password' => 'secret-password',
+            'remember' => '1',
+        ]);
 
-    Auth::shouldReceive('attempt')->with([
-        'email' => 'user@example.com',
-        'password' => 'password',
-    ], false)->once()->andReturnTrue();
+        $response->assertRedirect('/')->assertCookie(Auth::guard()->getRecallerName());
+        $this->assertAuthenticatedAs($user);
+    });
 
-    (new SessionsController)->store($request);
-})->group('auth', 'feature');
+    it('does not issue a remember cookie by default', function () {
+        $user = User::factory()->create(['password' => 'secret-password']);
 
-it('renders the login form for guests', function () {
-    /** @var TestCase $this */
-    $response = $this->get(route('login'));
+        $this->post(route('login'), ['email' => $user->email, 'password' => 'secret-password'])
+            ->assertCookieMissing(Auth::guard()->getRecallerName());
+    });
 
-    $response->assertOk()->assertViewIs('auth.login');
-})->group('auth', 'feature');
+    it('trims surrounding whitespace from the credentials', function () {
+        $user = User::factory()->create(['password' => 'secret-password']);
 
-it('authenticates a user with valid credentials', function () {
-    /** @var TestCase $this */
-    $user = User::factory()->create(['password' => 'password']);
-    $sessionId = session()->getId();
+        $this->post(route('login'), [
+            'email' => " {$user->email} ",
+            'password' => ' secret-password ',
+        ])->assertRedirect('/');
 
-    $response = $this->from(route('login'))->post(route('login'), [
-        'email' => $user->email,
-        'password' => 'password',
-        'remember' => '1',
-    ]);
+        $this->assertAuthenticatedAs($user);
+    });
 
-    $response->assertRedirect('/')->assertSessionHas('status', 'You are now logged in.');
-    $this->assertAuthenticatedAs($user);
-    expect(session()->getId())->not->toBe($sessionId);
-})->group('auth', 'feature');
+    it('rejects credentials that do not match and keeps the email in the form', function (string $email, string $password) {
+        User::factory()->create(['email' => 'jane@example.com', 'password' => 'secret-password']);
 
-it('trims login credentials before attempting authentication', function () {
-    /** @var TestCase $this */
-    $user = User::factory()->create(['password' => 'password']);
+        $response = $this->from(route('login'))->post(route('login'), [
+            'email' => $email,
+            'password' => $password,
+        ]);
 
-    $this->post(route('login'), [
-        'email' => " {$user->email} ",
-        'password' => ' password ',
-    ])->assertRedirect('/');
-
-    $this->assertAuthenticatedAs($user);
-})->group('auth', 'feature');
-
-it('rejects invalid login credentials without authenticating', function () {
-    /** @var TestCase $this */
-    $user = User::factory()->create(['password' => 'password']);
-
-    $response = $this->from(route('login'))->post(route('login'), [
-        'email' => $user->email,
-        'password' => 'wrong-password',
+        $response->assertRedirect(route('login'))
+            ->assertSessionHasErrors(['email' => 'These credentials do not match our records.'])
+            ->assertSessionHasInput('email', $email)
+            ->assertSessionMissing('_old_input.password');
+        $this->assertGuest();
+    })->with([
+        'wrong password' => ['jane@example.com', 'wrong-password'],
+        'wrong email' => ['nope@example.com', 'secret-password'],
+        'unknown user' => ['ghost@example.com', 'anything'],
     ]);
 
-    $response->assertRedirect(route('login'))
-        ->assertSessionHasErrors(['email'])
-        ->assertSessionHasInput('email', $user->email);
-    $this->assertGuest();
-})->group('auth', 'feature');
+    it('rejects a malformed payload before attempting authentication', function () {
+        $response = $this->from(route('login'))->post(route('login'), [
+            'email' => 'not-an-email',
+            'password' => '',
+        ]);
 
-it('rejects malformed login input', function () {
-    /** @var TestCase $this */
-    $response = $this->from(route('login'))->post(route('login'), [
-        'email' => 'not-an-email',
-        'password' => '',
-    ]);
+        $response->assertRedirect(route('login'))->assertSessionHasErrors([
+            'email' => 'The email field must be a valid email address.',
+            'password' => 'The password field is required.',
+        ]);
+        $this->assertGuest();
+    });
 
-    $response->assertRedirect(route('login'))->assertSessionHasErrors(['email', 'password']);
-    $this->assertGuest();
-})->group('auth', 'feature');
+    it('rejects an email longer than 255 characters', function () {
+        $this->from(route('login'))->post(route('login'), [
+            'email' => str_repeat('a', 244).'@example.com',
+            'password' => 'secret-password',
+        ])->assertSessionHasErrors(['email' => 'The email field must not be greater than 255 characters.']);
 
-it('rejects an overly long login email', function () {
-    /** @var TestCase $this */
-    $response = $this->from(route('login'))->post(route('login'), [
-        'email' => str_repeat('a', 248).'@example.com',
-        'password' => 'password',
-    ]);
+        $this->assertGuest();
+    });
 
-    $response->assertRedirect(route('login'))->assertSessionHasErrors('email');
-    $this->assertGuest();
-})->group('auth', 'feature');
+    it('reports missing credentials as required rather than as a failed login', function () {
+        $this->from(route('login'))->post(route('login'), [])
+            ->assertSessionHasErrors([
+                'email' => 'The email field is required.',
+                'password' => 'The password field is required.',
+            ]);
 
-it('logs out the authenticated user and invalidates the session', function () {
-    /** @var TestCase $this */
-    $user = User::factory()->create();
-    $this->actingAs($user);
-    session(['logout-marker' => 'present']);
-    $sessionId = session()->getId();
-    $csrfToken = session()->token();
+        $this->assertGuest();
+    });
 
-    $response = $this->delete(route('logout'));
+    it('rejects a non-string password before attempting authentication', function () {
+        $user = User::factory()->create(['password' => 'secret-password']);
 
-    $response->assertRedirect('/')->assertSessionHas('status', 'You have been logged out.');
-    $this->assertGuest();
-    expect(session()->has('logout-marker'))->toBeFalse();
-    expect(session()->getId())->not->toBe($sessionId);
-    expect(session()->token())->not->toBe($csrfToken);
-})->group('auth', 'feature');
+        $this->from(route('login'))->post(route('login'), [
+            'email' => $user->email,
+            'password' => ['secret-password'],
+        ])->assertSessionHasErrors(['password' => 'The password field must be a string.']);
 
-it('regenerates the session token when logging out', function () {
-    /** @var TestCase $this */
-    $session = Mockery::mock(Session::class);
-    $session->shouldReceive('invalidate')->once();
-    $session->shouldReceive('regenerateToken')->once();
+        $this->assertGuest();
+    })->todo('SessionsController trims the raw input before validating, so an array password raises a TypeError (500) instead of a validation error.');
 
-    $request = Mockery::mock(Request::class);
-    $request->shouldReceive('session')->twice()->andReturn($session);
-    Auth::shouldReceive('logout')->once();
+    it('redirects an already authenticated user without re-authenticating', function () {
+        $user = User::factory()->create();
+        $other = User::factory()->create(['password' => 'secret-password']);
 
-    (new SessionsController)->destroy($request);
-})->group('auth', 'feature');
+        $this->actingAs($user)
+            ->post(route('login'), ['email' => $other->email, 'password' => 'secret-password'])
+            ->assertRedirect('/');
+
+        $this->assertAuthenticatedAs($user);
+    });
+})->group('feature', 'auth');

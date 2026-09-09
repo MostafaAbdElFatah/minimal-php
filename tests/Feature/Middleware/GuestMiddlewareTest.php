@@ -1,29 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Models\User;
-use Tests\TestCase;
 
-test('renders the login page for guests', function () {
-    /** @var TestCase $this */
-    $response = $this->get('/login');
+it('redirects authenticated users home from guest-only routes', function (string $method, string $uri) {
+    $this->actingAs(User::factory()->create())->{$method}($uri)->assertRedirect('/');
+})->with([
+    'login form' => ['get', '/login'],
+    'login submit' => ['post', '/login'],
+    'register form' => ['get', '/register'],
+    'register submit' => ['post', '/register'],
+])->group('feature', 'middleware', 'auth');
 
-    $response->assertOk();
-    $response->assertSee('Sign in to IdeaHub');
-});
-
-test('renders the register page for guests', function () {
-    /** @var TestCase $this */
-    $response = $this->get('/register');
-
-    $response->assertOk();
-    $response->assertSee('Create your IdeaHub account');
-});
-
-test('redirects authenticated users away from guest auth pages', function () {
-    /** @var TestCase $this */
-    $user = User::factory()->create();
-
-    $response = $this->actingAs($user)->get('/login');
-
-    $response->assertRedirect('/');
-});
+it('lets guests reach the guest-only pages', function (string $uri) {
+    $this->get($uri)->assertOk();
+})->with(['/login', '/register'])->group('feature', 'middleware', 'auth');

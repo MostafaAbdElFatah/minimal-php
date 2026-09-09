@@ -1,26 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Models\Idea;
 use App\Models\User;
 
-it('shows an idea when its owner opens it', function () {
-    $user = User::factory()->create([
-        'email' => 'ideas-show@example.com',
-        'password' => bcrypt('password'),
-    ]);
-    $idea = Idea::factory()->for($user)->create([
-        'title' => 'Idea details',
-        'description' => 'Details displayed on the idea page.',
-    ]);
+it('shows the idea details to its owner with edit and delete actions', function () {
+    $user = User::factory()->create(['password' => 'password']);
+    $idea = Idea::factory()->for($user)->create(['title' => 'Idea details', 'description' => 'Details displayed on the idea page.']);
 
-    visit(route('login'))
-        ->fill('email', 'ideas-show@example.com')
-        ->fill('password', 'password')
-        ->press('@login')
-        ->navigate("/ideas/{$idea->id}")
+    loginAs($user)
+        ->click('Idea details')
+        ->assertPathIs("/ideas/{$idea->id}")
         ->assertSee('Idea details')
         ->assertSee('Details displayed on the idea page.')
-        ->assertSee('Edit')
-        ->assertSee('Delete')
+        ->assertVisible('@edit')
+        ->assertVisible('@delete')
         ->assertNoJavaScriptErrors();
-})->group('ideas', 'feature');
+})->group('browser', 'controllers');
+
+it('shows a not found page for another users idea', function () {
+    $user = User::factory()->create(['password' => 'password']);
+    $idea = Idea::factory()->create(['title' => 'Private idea']);
+
+    loginAs($user)
+        ->navigate("/ideas/{$idea->id}")
+        ->assertSee('404')
+        ->assertDontSee('Private idea');
+})->group('browser', 'controllers', 'policies');

@@ -1,45 +1,47 @@
 <?php
 
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
-use Tests\TestCase;
+declare(strict_types=1);
 
-it('creates an admin user from the console command', function () {
-    /** @var TestCase $this */
-    $this->artisan('make:admin', [
-        'email' => 'admin@example.com',
-        'password' => 'secret-password',
-    ])
+use App\Console\Commands\CreateAdminUser;
+use App\Models\User;
+use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Support\Facades\Hash;
+use Symfony\Component\Console\Exception\RuntimeException;
+
+covers(CreateAdminUser::class);
+
+it('creates an admin user with a hashed password', function () {
+    $this->artisan('make:admin', ['email' => 'admin@example.com', 'password' => 'secret-password'])
         ->expectsOutput('Admin user created: admin@example.com')
         ->assertExitCode(0);
 
-    $user = User::where('email', 'admin@example.com')->firstOrFail();
-
+    $user = User::firstWhere('email', 'admin@example.com');
     expect($user->first_name)->toBe('Admin')
         ->and($user->last_name)->toBe('User')
+        ->and($user->isAdmin())->toBeTrue()
         ->and(Hash::check('secret-password', $user->password))->toBeTrue();
-});
+})->group('feature', 'console');
 
-it('updates an existing user when creating an admin with the same email', function () {
-    /** @var TestCase $this */
-    $user = User::factory()->create([
-        'email' => 'admin@example.com',
-        'first_name' => 'Old',
-        'last_name' => 'Name',
-        'password' => 'old-password',
-    ]);
+it('updates the existing user with the same email instead of duplicating', function () {
+    $user = User::factory()->create(['email' => 'admin@example.com', 'first_name' => 'Old', 'password' => 'old-password']);
 
-    $this->artisan('make:admin', [
-        'email' => 'admin@example.com',
-        'password' => 'new-password',
-    ])
-        ->expectsOutput('Admin user created: admin@example.com')
+    $this->artisan('make:admin', ['email' => 'admin@example.com', 'password' => 'new-password'])
         ->assertExitCode(0);
 
-    $user->refresh();
+    $this->assertDatabaseCount('users', 1);
+    expect($user->fresh()->first_name)->toBe('Admin')
+        ->and(Hash::check('new-password', $user->fresh()->password))->toBeTrue();
+})->group('feature', 'console');
 
-    expect(User::where('email', 'admin@example.com')->count())->toBe(1)
-        ->and($user->first_name)->toBe('Admin')
-        ->and($user->last_name)->toBe('User')
-        ->and(Hash::check('new-password', $user->password))->toBeTrue();
-});
+it('fails when the arguments are missing', function (array $arguments) {
+    expect(fn () => $this->artisan('make:admin', $arguments))->toThrow(RuntimeException::class);
+
+    $this->assertDatabaseCount('users', 0);
+})->with([
+    'no arguments' => [[]],
+    'password missing' => [['email' => 'admin@example.com']],
+])->group('feature', 'console');
+
+it('registers no scheduled tasks', function () {
+    expect(app(Schedule::class)->events())->toBeEmpty();
+})->group('feature', 'console');

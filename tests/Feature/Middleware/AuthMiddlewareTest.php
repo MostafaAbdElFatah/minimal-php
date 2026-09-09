@@ -1,26 +1,29 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Models\User;
-use Tests\TestCase;
 
-it('redirects guests to login from the home page', function () {
-    /** @var TestCase $this */
-    $this->get(route('home'))->assertRedirect(route('login'));
-})->group('auth', 'feature');
+it('redirects guests to the login page from every protected route', function (string $method, string $uri) {
+    $this->{$method}($uri)->assertRedirect(route('login'));
+})->with([
+    'home' => ['get', '/'],
+    'create idea' => ['get', '/ideas/create'],
+    'store idea' => ['post', '/ideas/create'],
+    'destroy all ideas' => ['delete', '/ideas'],
+    'logout' => ['delete', '/logout'],
+    'admin' => ['get', '/admin'],
+])->group('feature', 'middleware', 'auth');
 
-it('redirects guests to login from the create idea page', function () {
-    /** @var TestCase $this */
+it('lets authenticated users through', function () {
+    $this->actingAs(User::factory()->create())->get(route('home'))->assertOk();
+})->group('feature', 'middleware', 'auth');
+
+it('remembers the intended URL and returns there after login', function () {
+    $user = User::factory()->create(['password' => 'secret-password']);
+
     $this->get('/ideas/create')->assertRedirect(route('login'));
-})->group('auth', 'feature');
-
-it('redirects guests to login when they log out', function () {
-    /** @var TestCase $this */
-    $this->delete(route('logout'))->assertRedirect(route('login'));
-})->group('auth', 'feature');
-
-it('redirects authenticated users away from registration', function () {
-    /** @var TestCase $this */
-    $response = $this->actingAs(User::factory()->create())->get(route('register'));
-
-    $response->assertRedirect('/');
-})->group('auth', 'feature');
+    $this->post(route('login'), ['email' => $user->email, 'password' => 'secret-password'])
+        ->assertRedirect('/');
+})->group('feature', 'middleware', 'auth')
+    ->todo('SessionsController redirects to "/" unconditionally instead of redirect()->intended(); enable when intended redirects are implemented.');

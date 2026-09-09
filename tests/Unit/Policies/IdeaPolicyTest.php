@@ -1,37 +1,43 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Models\Idea;
 use App\Models\User;
 use App\Policies\IdeaPolicy;
-use Illuminate\Auth\Access\Response;
-use Illuminate\Support\Facades\Gate;
 
-it('allows the owner to view, update, and delete an idea', function () {
-    $owner = User::factory()->create();
-    $idea = Idea::factory()->for($owner)->create();
-    $policy = new IdeaPolicy;
+covers(IdeaPolicy::class);
 
-    expect($policy->view($owner, $idea)->allowed())->toBeTrue()
-        ->and($policy->update($owner, $idea)->allowed())->toBeTrue()
-        ->and($policy->delete($owner, $idea)->allowed())->toBeTrue();
-});
+/**
+ * Build an in-memory idea owned by the given user without touching the database.
+ */
+function ideaOwnedBy(User $owner): Idea
+{
+    return Idea::factory()->make(['user_id' => $owner->id])->setRelation('user', $owner);
+}
 
-it('denies a non-owner from viewing, updating, or deleting an idea as not found', function () {
-    $owner = User::factory()->create();
-    $otherUser = User::factory()->create();
-    $idea = Idea::factory()->for($owner)->create();
-    $policy = new IdeaPolicy;
+test('nobody may list every idea', function () {
+    $user = (new User)->forceFill(['id' => 1]);
 
-    expect($policy->view($otherUser, $idea))->toBeInstanceOf(Response::class)
-        ->and($policy->view($otherUser, $idea)->denied())->toBeTrue()
-        ->and($policy->update($otherUser, $idea)->denied())->toBeTrue()
-        ->and($policy->delete($otherUser, $idea)->denied())->toBeTrue();
-});
+    expect((new IdeaPolicy)->viewAny($user))->toBeFalse();
+})->group('unit', 'policies');
 
-it('denies guests from viewing, updating, or deleting an idea through the gate', function () {
-    $idea = Idea::factory()->create();
+test('the owner is allowed to view, update and delete their idea', function (string $ability) {
+    $owner = User::factory()->make()->forceFill(['id' => 1]);
+    $idea = ideaOwnedBy($owner);
 
-    expect(Gate::forUser(null)->allows('view', $idea))->toBeFalse()
-        ->and(Gate::forUser(null)->allows('update', $idea))->toBeFalse()
-        ->and(Gate::forUser(null)->allows('delete', $idea))->toBeFalse();
-});
+    $response = (new IdeaPolicy)->{$ability}($owner, $idea);
+
+    expect($response->allowed())->toBeTrue();
+})->with(['view', 'update', 'delete'])->group('unit', 'policies');
+
+test('another user is denied as not found so the idea is never revealed', function (string $ability) {
+    $owner = User::factory()->make()->forceFill(['id' => 1]);
+    $stranger = User::factory()->make()->forceFill(['id' => 2]);
+    $idea = ideaOwnedBy($owner);
+
+    $response = (new IdeaPolicy)->{$ability}($stranger, $idea);
+
+    expect($response->denied())->toBeTrue()
+        ->and($response->status())->toBe(404);
+})->with(['view', 'update', 'delete'])->group('unit', 'policies');

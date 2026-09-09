@@ -1,13 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 /**
- * @method \Pest\Browser\Api\PendingAwaitablePage visit(string $url)
+ * @method \Pest\Browser\Api\PendingAwaitablePage visit(string|array<int, string> $url)
  */
 abstract class TestCase extends BaseTestCase
 {
-    //
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Model::preventLazyLoading();
+        Model::preventAccessingMissingAttributes();
+        Model::preventSilentlyDiscardingAttributes();
+    }
 }

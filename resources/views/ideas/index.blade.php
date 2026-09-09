@@ -9,6 +9,7 @@
             
             <a
                 href="/ideas/create"
+                data-test="new-idea"
                 class="rounded bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500"
             >
                 + New Idea
@@ -25,6 +26,7 @@
 
                     <button
                         type="submit"
+                        data-test="delete-all"
                         class="rounded bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-500"
                     >
                         Delete All Ideas

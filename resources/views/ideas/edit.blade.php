@@ -63,6 +63,7 @@
                     {{-- Save --}}
                     <button
                         type="submit"
+                        data-test="save"
                         class="group inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-primary/20 bg-primary/10 px-5 py-2.5 text-sm font-semibold text-primary shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/40 hover:bg-primary hover:text-primary-content hover:shadow-md hover:shadow-primary/10"
                     >
                         <svg

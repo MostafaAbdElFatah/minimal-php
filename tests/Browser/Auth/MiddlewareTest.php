@@ -1,19 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Models\User;
-use Tests\TestCase;
 
-it('redirects guests to login from the home page', function () {
-    visit(route('home'))->assertUrlIs(route('login'));
-})->group('auth', 'feature');
+it('redirects guests to the login page', function (string $uri) {
+    visit($uri)->assertPathIs('/login')->assertNoJavaScriptErrors();
+})->with(['/', '/ideas/create', '/admin'])->group('browser', 'auth', 'middleware');
 
-it('redirects guests to login from the create idea page', function () {
-    visit('/ideas/create')->assertUrlIs(route('login'));
-})->group('auth', 'feature');
+it('redirects authenticated users away from guest pages', function (string $uri) {
+    $user = User::factory()->create(['password' => 'password']);
 
-it('redirects authenticated users away from registration', function () {
-    /** @var TestCase $this */
-    $response = $this->actingAs(User::factory()->create())->get(route('register'));
-
-    $response->assertRedirect('/');
-})->group('auth', 'feature');
+    loginAs($user)->navigate($uri)->assertPathIs('/')->assertNoJavaScriptErrors();
+})->with(['/login', '/register'])->group('browser', 'auth', 'middleware');

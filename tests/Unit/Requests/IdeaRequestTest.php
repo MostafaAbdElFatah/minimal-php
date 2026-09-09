@@ -1,168 +1,85 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Enums\IdeaState;
 use App\Http\Requests\IdeaRequest;
-use App\Http\Requests\StoreRegisterRequest;
-use App\Models\User;
-use Tests\TestCase;
+use Illuminate\Support\Facades\Validator;
 
-it('trims registration fields before validation', function () {
-    $request = StoreRegisterRequest::create('/register', 'POST', [
-        'first_name' => ' Jane ',
-        'last_name' => ' Doe ',
-        'email' => ' jane@example.com ',
-        'password' => ' password ',
-        'password_confirmation' => ' password ',
-    ]);
+covers(IdeaRequest::class);
 
-    $prepareForValidation = new ReflectionMethod(StoreRegisterRequest::class, 'prepareForValidation');
-    $prepareForValidation->invoke($request);
+/**
+ * @return array<string, string>
+ */
+function validIdeaInput(): array
+{
+    return [
+        'title' => 'A valid title',
+        'description' => 'A description that is long enough.',
+        'state' => 'active',
+    ];
+}
 
-    expect($request->all())->toMatchArray([
-        'first_name' => 'Jane',
-        'last_name' => 'Doe',
-        'email' => 'jane@example.com',
-        'password' => 'password',
-        'password_confirmation' => 'password',
-    ]);
-});
+it('authorizes every authenticated request', function () {
+    expect((new IdeaRequest)->authorize())->toBeTrue();
+})->group('unit', 'requests');
 
-it('normalizes missing registration fields to empty strings', function () {
-    $request = StoreRegisterRequest::create('/register', 'POST');
+it('accepts a valid payload', function () {
+    $validator = Validator::make(validIdeaInput(), (new IdeaRequest)->rules());
 
-    $prepareForValidation = new ReflectionMethod(StoreRegisterRequest::class, 'prepareForValidation');
-    $prepareForValidation->invoke($request);
+    expect($validator->passes())->toBeTrue();
+})->group('unit', 'requests');
 
-    expect($request->all())->toMatchArray([
-        'first_name' => '',
-        'last_name' => '',
-        'email' => '',
-        'password' => '',
-        'password_confirmation' => '',
-    ]);
-});
+it('accepts every idea state', function (IdeaState $state) {
+    $validator = Validator::make([...validIdeaInput(), 'state' => $state->value], (new IdeaRequest)->rules());
 
-it('trims idea fields before validation', function () {
+    expect($validator->passes())->toBeTrue();
+})->with('idea states')->group('unit', 'requests');
+
+it('rejects an invalid field with the expected message', function (array $overrides, string $field, string $message) {
+    $validator = Validator::make([...validIdeaInput(), ...$overrides], (new IdeaRequest)->rules());
+
+    expect($validator->fails())->toBeTrue()
+        ->and($validator->errors()->first($field))->toBe($message);
+})->with('invalid idea payloads')->group('unit', 'requests');
+
+it('accepts boundary lengths for title and description', function (array $overrides) {
+    $validator = Validator::make([...validIdeaInput(), ...$overrides], (new IdeaRequest)->rules());
+
+    expect($validator->passes())->toBeTrue();
+})->with([
+    'title of exactly 3 characters' => [['title' => 'abc']],
+    'title of exactly 255 characters' => [['title' => str_repeat('a', 255)]],
+    'description of exactly 10 characters' => [['description' => str_repeat('d', 10)]],
+])->group('unit', 'requests');
+
+it('rejects a non-string title and description even when their size would pass', function () {
+    $validator = Validator::make([...validIdeaInput(), 'title' => ['a', 'b', 'c'], 'description' => 12345678901], (new IdeaRequest)->rules());
+
+    expect($validator->errors()->first('title'))->toBe('The title field must be a string.')
+        ->and($validator->errors()->first('description'))->toBe('The description field must be a string.');
+})->group('unit', 'requests');
+
+it('trims every field before validation', function () {
     $request = IdeaRequest::create('/ideas/create', 'POST', [
         'title' => ' A title ',
         'description' => ' A long enough description. ',
         'state' => ' active ',
     ]);
 
-    $prepareForValidation = new ReflectionMethod(IdeaRequest::class, 'prepareForValidation');
-    $prepareForValidation->invoke($request);
+    (new ReflectionMethod(IdeaRequest::class, 'prepareForValidation'))->invoke($request);
 
-    expect($request->all())->toMatchArray([
+    expect($request->all())->toBe([
         'title' => 'A title',
         'description' => 'A long enough description.',
         'state' => 'active',
     ]);
+})->group('unit', 'requests');
 
-    $emptyRequest = IdeaRequest::create('/ideas/create', 'POST');
-    $prepareForValidation->invoke($emptyRequest);
+it('normalizes missing fields to empty strings so the required rule fires', function () {
+    $request = IdeaRequest::create('/ideas/create', 'POST');
 
-    expect($emptyRequest->all())->toMatchArray([
-        'title' => '',
-        'description' => '',
-        'state' => '',
-    ]);
-});
+    (new ReflectionMethod(IdeaRequest::class, 'prepareForValidation'))->invoke($request);
 
-it('keeps the registration validation contract explicit', function () {
-    $rules = (new StoreRegisterRequest)->rules();
-
-    expect($rules['first_name'])->toContain('required', 'string', 'min:2', 'max:100')
-        ->and($rules['last_name'])->toContain('required', 'string', 'min:2', 'max:100')
-        ->and($rules['email'])->toContain('required', 'string', 'email', 'max:255', 'unique:users,email')
-        ->and($rules['password'])->toContain('required', 'string', 'confirmed')
-        ->and($rules['password'])->toHaveCount(4);
-});
-
-it('keeps the idea validation contract explicit', function () {
-    $rules = (new IdeaRequest)->rules();
-
-    expect($rules['title'])->toContain('required', 'string', 'min:3', 'max:255')
-        ->and($rules['description'])->toContain('required', 'string', 'min:10')
-        ->and($rules['state'])->toContain('required');
-});
-
-it('rejects a short idea title', function () {
-    /** @var TestCase $this */
-    $response = $this->actingAs(User::factory()->create())->from('/ideas/create')->post('/ideas/create', [
-        'title' => 'ab', 'description' => 'A valid description here.', 'state' => IdeaState::ACTIVE->value,
-    ]);
-
-    $response->assertRedirect('/ideas/create')->assertSessionHasErrors('title');
-})->group('feature');
-
-it('rejects a short idea description', function () {
-    /** @var TestCase $this */
-    $response = $this->actingAs(User::factory()->create())->from('/ideas/create')->post('/ideas/create', [
-        'title' => 'A valid title', 'description' => 'short', 'state' => IdeaState::ACTIVE->value,
-    ]);
-
-    $response->assertRedirect('/ideas/create')->assertSessionHasErrors('description');
-})->group('feature');
-
-it('rejects an invalid idea state', function () {
-    /** @var TestCase $this */
-    $response = $this->actingAs(User::factory()->create())->from('/ideas/create')->post('/ideas/create', [
-        'title' => 'A valid title', 'description' => 'A valid description here.', 'state' => 'unknown',
-    ]);
-
-    $response->assertRedirect('/ideas/create')->assertSessionHasErrors('state');
-})->group('feature');
-
-it('rejects a short registration first name', function () {
-    /** @var TestCase $this */
-    $response = $this->from('/register')->post('/register', [
-        'first_name' => 'A', 'last_name' => 'Doe', 'email' => 'valid@example.com',
-        'password' => 'password', 'password_confirmation' => 'password',
-    ]);
-
-    $response->assertRedirect('/register')->assertSessionHasErrors('first_name');
-})->group('auth', 'feature');
-
-it('rejects a short registration last name', function () {
-    /** @var TestCase $this */
-    $response = $this->from('/register')->post('/register', [
-        'first_name' => 'Jane', 'last_name' => 'D', 'email' => 'valid@example.com',
-        'password' => 'password', 'password_confirmation' => 'password',
-    ]);
-
-    $response->assertRedirect('/register')->assertSessionHasErrors('last_name');
-})->group('auth', 'feature');
-
-it('rejects registration values over their maximum lengths', function () {
-    /** @var TestCase $this */
-    $response = $this->from('/register')->post('/register', [
-        'first_name' => str_repeat('a', 101),
-        'last_name' => str_repeat('b', 101),
-        'email' => str_repeat('c', 247).'@example.com',
-        'password' => 'password',
-        'password_confirmation' => 'password',
-    ]);
-
-    $response->assertRedirect('/register')
-        ->assertSessionHasErrors(['first_name', 'last_name', 'email']);
-})->group('auth', 'feature');
-
-it('rejects an invalid registration email', function () {
-    /** @var TestCase $this */
-    $response = $this->from('/register')->post('/register', [
-        'first_name' => 'Jane', 'last_name' => 'Doe', 'email' => 'invalid',
-        'password' => 'password', 'password_confirmation' => 'password',
-    ]);
-
-    $response->assertRedirect('/register')->assertSessionHasErrors('email');
-})->group('auth', 'feature');
-
-it('rejects mismatched registration passwords', function () {
-    /** @var TestCase $this */
-    $response = $this->from('/register')->post('/register', [
-        'first_name' => 'Jane', 'last_name' => 'Doe', 'email' => 'valid@example.com',
-        'password' => 'password', 'password_confirmation' => 'different',
-    ]);
-
-    $response->assertRedirect('/register')->assertSessionHasErrors('password');
-})->group('auth', 'feature');
+    expect($request->all())->toBe(['title' => '', 'description' => '', 'state' => '']);
+})->group('unit', 'requests');

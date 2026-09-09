@@ -59,6 +59,7 @@
                 {{-- Edit --}}
                 <a
                     href="/ideas/{{ $idea->id }}/edit"
+                    data-test="edit"
                     class="group inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-primary/20 bg-primary/10 px-4 py-2.5 text-sm font-semibold text-primary shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/40 hover:bg-primary hover:text-primary-content hover:shadow-md hover:shadow-primary/10"
                 >
                     <svg
@@ -89,6 +90,7 @@
 
                     <button
                         type="submit"
+                        data-test="delete"
                         onclick="return confirm('Are you sure you want to delete this idea?')"
                         class="group inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-error/20 bg-error/10 px-4 py-2.5 text-sm font-semibold text-error shadow-lg shadow-error/5 transition-all duration-200 hover:-translate-y-0.5 hover:border-error/40 hover:bg-error hover:text-error-content"
                     >

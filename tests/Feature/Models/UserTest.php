@@ -1,42 +1,60 @@
 <?php
 
-use App\Enums\IdeaState;
+declare(strict_types=1);
+
 use App\Models\Idea;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Tests\TestCase;
+use Illuminate\Support\Facades\Hash;
 
-test('the idea model casts state and exposes its computed color', function () {
-    $idea = Idea::factory()->make([
-        'state' => IdeaState::ACTIVE,
-    ]);
+covers(User::class);
 
-    expect($idea->state)->toBeInstanceOf(IdeaState::class);
-    expect($idea->state)->toBe(IdeaState::ACTIVE);
-    expect($idea->color)->toBe('green');
-});
-use Illuminate\Support\Carbon;
-
-test('the user model exposes its ideas relationship and admin helper', function () {
-    User::factory()->create();
+it('owns the ideas created through the relationship', function () {
     $user = User::factory()->create();
+    Idea::factory()->count(2)->for($user)->create();
+    Idea::factory()->create();
 
-    expect($user->ideas())->toBeInstanceOf(HasMany::class);
-    expect($user->isAdmin())->toBeFalse();
-    expect(User::findOrFail(1)->isAdmin())->toBeTrue();
-    expect(User::make(['id' => '1'])->isAdmin())->toBeFalse();
-});
+    expect($user->ideas)->toHaveCount(2)
+        ->and($user->ideas->every(fn (Idea $idea): bool => $idea->user_id === $user->id))->toBeTrue();
+})->group('feature', 'models');
 
-test('the user model casts email verification timestamps to Carbon', function () {
-    $user = User::factory()->make(['email_verified_at' => '2026-01-01 12:00:00']);
+it('eager loads ideas without lazy loading', function () {
+    $user = User::factory()->create();
+    Idea::factory()->count(2)->for($user)->create();
 
-    expect($user->email_verified_at)->toBeInstanceOf(Carbon::class);
-});
+    $loaded = User::with('ideas')->findOrFail($user->id);
 
-test('the idea factory creates an owning user by default', function () {
-    /** @var TestCase $this */
-    $idea = Idea::factory()->create();
+    expect($loaded->relationLoaded('ideas'))->toBeTrue()->and($loaded->ideas)->toHaveCount(2);
+})->group('feature', 'models');
 
-    expect($idea->user)->toBeInstanceOf(User::class);
-    $this->assertModelExists($idea->user);
-});
+it('stores the password hashed', function () {
+    $user = User::factory()->create(['password' => 'plain-password']);
+
+    expect($user->getRawOriginal('password'))->not->toBe('plain-password')
+        ->and(Hash::check('plain-password', $user->fresh()->password))->toBeTrue();
+})->group('feature', 'models');
+
+it('does not rehash an already hashed password', function () {
+    $hash = Hash::make('plain-password');
+
+    $user = User::factory()->create(['password' => $hash]);
+
+    expect($user->getRawOriginal('password'))->toBe($hash);
+})->group('feature', 'models');
+
+it('deletes its ideas when the user is deleted', function () {
+    $user = User::factory()->create();
+    $idea = Idea::factory()->for($user)->create();
+    $otherIdea = Idea::factory()->create();
+
+    $user->delete();
+
+    $this->assertModelMissing($idea);
+    $this->assertModelExists($otherIdea);
+})->group('feature', 'models');
+
+it('is an admin only when it is the first user', function () {
+    $first = User::factory()->create();
+    $second = User::factory()->create();
+
+    expect($first->isAdmin())->toBeTrue()->and($second->isAdmin())->toBeFalse();
+})->group('feature', 'models');
