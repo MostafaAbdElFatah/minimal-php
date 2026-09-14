@@ -8,7 +8,7 @@ use App\Models\User;
 
 covers(IdeaController::class);
 
-it('deletes every idea of the authenticated user and nobody elses', function () {
+it('deletes every idea of the authenticated user and nobody elses', function (): void {
     $user = User::factory()->create();
     Idea::factory()->count(3)->for($user)->create();
     $otherIdea = Idea::factory()->create();
@@ -20,14 +20,14 @@ it('deletes every idea of the authenticated user and nobody elses', function () 
     $this->assertModelExists($otherIdea);
 })->group('feature', 'controllers');
 
-it('succeeds when the user has no ideas', function () {
+it('succeeds when the user has no ideas', function (): void {
     $this->actingAs(User::factory()->create())
         ->delete(route('ideas.destroy-all'))
         ->assertRedirect('/')
         ->assertSessionHas('status', 'All ideas deleted successfully!');
 })->group('feature', 'controllers');
 
-it('redirects guests to the login page and deletes nothing', function () {
+it('redirects guests to the login page and deletes nothing', function (): void {
     Idea::factory()->count(2)->create();
 
     $this->delete(route('ideas.destroy-all'))->assertRedirect(route('login'));

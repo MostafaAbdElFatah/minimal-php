@@ -10,25 +10,25 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 covers(Idea::class);
 
-it('casts the stored state string to the enum', function () {
+it('casts the stored state string to the enum', function (): void {
     $idea = new Idea(['state' => 'paused']);
 
     expect($idea->state)->toBe(IdeaState::PAUSED);
 })->group('unit', 'models');
 
-it('derives its color from the state', function (IdeaState $state) {
+it('derives its color from the state', function (IdeaState $state): void {
     $idea = Idea::factory()->make(['state' => $state, 'user_id' => 1]);
 
     expect($idea->color)->toBe($state->color());
 })->with('idea states')->group('unit', 'models');
 
-it('serializes the state as its stored value', function () {
+it('serializes the state as its stored value', function (): void {
     $idea = Idea::factory()->make(['state' => IdeaState::ACTIVE, 'user_id' => 1]);
 
     expect($idea->toArray()['state'])->toBe('active');
 })->group('unit', 'models');
 
-it('allows mass assignment of the editable attributes only', function () {
+it('allows mass assignment of the editable attributes only', function (): void {
     $idea = new Idea([
         'title' => 'A title',
         'description' => 'A description',
@@ -44,12 +44,12 @@ it('allows mass assignment of the editable attributes only', function () {
     ]);
 })->group('unit', 'models');
 
-it('rejects mass assignment of the primary key', function () {
+it('rejects mass assignment of the primary key', function (): void {
     expect(fn () => new Idea(['id' => 99, 'title' => 'x']))
         ->toThrow(MassAssignmentException::class);
 })->group('unit', 'models');
 
-it('belongs to a user through the user_id foreign key', function () {
+it('belongs to a user through the user_id foreign key', function (): void {
     $relation = (new Idea)->user();
 
     expect($relation)->toBeInstanceOf(BelongsTo::class)

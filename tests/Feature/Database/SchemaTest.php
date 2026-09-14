@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\Schema;
 
-test('the users table has the authentication columns', function () {
+test('the users table has the authentication columns', function (): void {
     expect(Schema::hasColumns('users', [
         'id', 'first_name', 'last_name', 'email', 'email_verified_at', 'password', 'remember_token', 'created_at', 'updated_at',
     ]))->toBeTrue();
 })->group('feature', 'database');
 
-test('the ideas table has the ownership and state columns', function () {
+test('the ideas table has the ownership and state columns', function (): void {
     expect(Schema::hasColumns('ideas', ['id', 'user_id', 'title', 'description', 'state', 'created_at', 'updated_at']))->toBeTrue();
 })->group('feature', 'database');
 
-test('critical columns have the expected types', function (string $table, string $column, string $type) {
+test('critical columns have the expected types', function (string $table, string $column, string $type): void {
     expect(Schema::getColumnType($table, $column))->toBe($type);
 })->with([
     'users.email is varchar' => ['users', 'email', 'varchar'],
@@ -23,19 +23,19 @@ test('critical columns have the expected types', function (string $table, string
     'ideas.user_id is integer' => ['ideas', 'user_id', 'integer'],
 ])->group('feature', 'database');
 
-test('the ideas state column defaults to pending', function () {
+test('the ideas state column defaults to pending', function (): void {
     $column = collect(Schema::getColumns('ideas'))->firstWhere('name', 'state');
 
     expect($column['default'])->toContain('pending')->and($column['nullable'])->toBeFalse();
 })->group('feature', 'database');
 
-test('users.email is unique', function () {
+test('users.email is unique', function (): void {
     $indexes = collect(Schema::getIndexes('users'))->filter(fn (array $index): bool => $index['unique'] && $index['columns'] === ['email']);
 
     expect($indexes)->not->toBeEmpty();
 })->group('feature', 'database');
 
-test('ideas.user_id references users and cascades on delete', function () {
+test('ideas.user_id references users and cascades on delete', function (): void {
     $foreignKey = collect(Schema::getForeignKeys('ideas'))->firstWhere('columns', ['user_id']);
 
     expect($foreignKey['foreign_table'])->toBe('users')
@@ -43,6 +43,6 @@ test('ideas.user_id references users and cascades on delete', function () {
         ->and($foreignKey['on_delete'])->toBe('cascade');
 })->group('feature', 'database');
 
-test('the framework support tables exist', function (string $table) {
+test('the framework support tables exist', function (string $table): void {
     expect(Schema::hasTable($table))->toBeTrue();
 })->with(['password_reset_tokens', 'sessions', 'cache', 'jobs', 'failed_jobs'])->group('feature', 'database');

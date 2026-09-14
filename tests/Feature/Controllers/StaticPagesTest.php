@@ -4,29 +4,29 @@ declare(strict_types=1);
 
 use App\Models\User;
 
-it('renders the public information pages', function (string $uri, string $heading) {
+it('renders the public information pages', function (string $uri, string $heading): void {
     $this->get($uri)->assertOk()->assertSee($heading);
 })->with([
     'about' => ['/about', 'About Us'],
     'contact' => ['/contact', 'Contact Us'],
 ])->group('feature', 'controllers');
 
-it('greets the visitor by the name in the query string', function () {
+it('greets the visitor by the name in the query string', function (): void {
     $this->get('/welcome?name=Jane')->assertOk()->assertSee('Hello, Jane');
 })->group('feature', 'controllers')
     ->todo('Route::view evaluates request("name") when routes are registered, so the page always greets "Guest". Move the lookup into the view or a controller.');
 
-it('falls back to Guest when no name is given', function () {
+it('falls back to Guest when no name is given', function (): void {
     $this->get('/welcome')->assertOk()->assertSee('Hello, Guest');
 })->group('feature', 'controllers');
 
-it('never renders raw markup from the name in the query string', function () {
+it('never renders raw markup from the name in the query string', function (): void {
     $this->get('/welcome?name='.urlencode('<script>alert(1)</script>'))
         ->assertOk()
         ->assertDontSee('<script>alert(1)</script>', false);
 })->group('feature', 'controllers');
 
-it('shows the account menu to guests and the avatar menu to users', function () {
+it('shows the account menu to guests and the avatar menu to users', function (): void {
     $this->get('/about')->assertSee('Login')->assertSee('Register')->assertDontSee('Logout');
 
     $this->actingAs(User::factory()->create())->get('/about')
@@ -34,6 +34,6 @@ it('shows the account menu to guests and the avatar menu to users', function () 
         ->assertDontSee('Register');
 })->group('feature', 'components');
 
-it('responds to the health check endpoint', function () {
+it('responds to the health check endpoint', function (): void {
     $this->get('/up')->assertOk();
 })->group('feature', 'controllers');

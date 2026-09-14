@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
 
-test('named routes resolve to the expected URIs', function (string $name, string $uri) {
+test('named routes resolve to the expected URIs', function (string $name, string $uri): void {
     expect(route($name, absolute: false))->toBe($uri);
 })->with([
     'home' => ['home', '/'],
@@ -14,7 +14,7 @@ test('named routes resolve to the expected URIs', function (string $name, string
     'destroy all ideas' => ['ideas.destroy-all', '/ideas'],
 ])->group('feature', 'middleware');
 
-test('routes carry the expected middleware', function (string $name, string $middleware) {
+test('routes carry the expected middleware', function (string $name, string $middleware): void {
     expect(Route::getRoutes()->getByName($name)->middleware())->toContain($middleware);
 })->with([
     'home requires auth' => ['home', 'auth'],
@@ -24,13 +24,13 @@ test('routes carry the expected middleware', function (string $name, string $mid
     'register is guest only' => ['register', 'guest'],
 ])->group('feature', 'middleware');
 
-test('the admin page is guarded by auth and the view-admin gate', function () {
+test('the admin page is guarded by auth and the view-admin gate', function (): void {
     $route = collect(Route::getRoutes()->getRoutes())->first(fn ($route): bool => $route->uri() === 'admin');
 
     expect($route->middleware())->toContain('auth')->toContain('can:view-admin');
 })->group('feature', 'middleware', 'policies');
 
-test('the edit route is guarded by the update ability', function () {
+test('the edit route is guarded by the update ability', function (): void {
     $route = collect(Route::getRoutes()->getRoutes())->first(fn ($route): bool => $route->uri() === 'ideas/{idea}/edit');
 
     expect($route->middleware())->toContain('can:update,idea');

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use App\Models\User;
 
-it('redirects guests to the login page from every protected route', function (string $method, string $uri) {
+it('redirects guests to the login page from every protected route', function (string $method, string $uri): void {
     $this->{$method}($uri)->assertRedirect(route('login'));
 })->with([
     'home' => ['get', '/'],
@@ -15,11 +15,11 @@ it('redirects guests to the login page from every protected route', function (st
     'admin' => ['get', '/admin'],
 ])->group('feature', 'middleware', 'auth');
 
-it('lets authenticated users through', function () {
+it('lets authenticated users through', function (): void {
     $this->actingAs(User::factory()->create())->get(route('home'))->assertOk();
 })->group('feature', 'middleware', 'auth');
 
-it('remembers the intended URL and returns there after login', function () {
+it('remembers the intended URL and returns there after login', function (): void {
     $user = User::factory()->create(['password' => 'secret-password']);
 
     $this->get('/ideas/create')->assertRedirect(route('login'));

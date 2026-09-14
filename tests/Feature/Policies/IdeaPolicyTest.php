@@ -9,11 +9,11 @@ use Illuminate\Support\Facades\Gate;
 
 covers(IdeaPolicy::class);
 
-test('the policy is discovered for the Idea model', function () {
+test('the policy is discovered for the Idea model', function (): void {
     expect(Gate::getPolicyFor(Idea::class))->toBeInstanceOf(IdeaPolicy::class);
 })->group('feature', 'policies');
 
-test('the gate resolves each ability for each actor', function (string $actor, string $ability, bool $allowed) {
+test('the gate resolves each ability for each actor', function (string $actor, string $ability, bool $allowed): void {
     $owner = User::factory()->create();
     $idea = Idea::factory()->for($owner)->create();
     $user = match ($actor) {
@@ -32,7 +32,7 @@ test('the gate resolves each ability for each actor', function (string $actor, s
     yield 'owner cannot viewAny' => ['owner', 'viewAny', false];
 })->group('feature', 'policies');
 
-test('a denied ability responds as not found', function () {
+test('a denied ability responds as not found', function (): void {
     $idea = Idea::factory()->create();
 
     $response = Gate::forUser(User::factory()->create())->inspect('view', $idea);

@@ -22,7 +22,7 @@ function registrationPayload(array $overrides = []): array
     ];
 }
 
-it('rejects an email that already exists regardless of surrounding whitespace', function () {
+it('rejects an email that already exists regardless of surrounding whitespace', function (): void {
     User::factory()->create(['email' => 'jane@example.com']);
 
     $this->from(route('register'))
@@ -33,7 +33,7 @@ it('rejects an email that already exists regardless of surrounding whitespace', 
     $this->assertDatabaseCount('users', 1);
 })->group('feature', 'requests');
 
-it('shows the user-facing message for each invalid field', function (array $overrides, string $field, string $message) {
+it('shows the user-facing message for each invalid field', function (array $overrides, string $field, string $message): void {
     $this->from(route('register'))
         ->post(route('register'), registrationPayload($overrides))
         ->assertRedirect(route('register'))
@@ -47,7 +47,7 @@ it('shows the user-facing message for each invalid field', function (array $over
     'mismatched confirmation' => [['password_confirmation' => 'other-password'], 'password', 'The password field confirmation does not match.'],
 ])->group('feature', 'requests');
 
-it('does not keep the password in old input after a failure', function () {
+it('does not keep the password in old input after a failure', function (): void {
     $this->from(route('register'))
         ->post(route('register'), registrationPayload(['email' => 'bad']))
         ->assertSessionHasInput('first_name', 'Jane')

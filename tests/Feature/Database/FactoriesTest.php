@@ -6,26 +6,26 @@ use App\Enums\IdeaState;
 use App\Models\Idea;
 use App\Models\User;
 
-it('creates persistable users', function () {
+it('creates persistable users', function (): void {
     User::factory()->count(3)->create();
 
     $this->assertDatabaseCount('users', 3);
 })->group('feature', 'database', 'models');
 
-it('creates unverified users through the factory state', function () {
+it('creates unverified users through the factory state', function (): void {
     $user = User::factory()->unverified()->create();
 
     $this->assertDatabaseHas('users', ['id' => $user->id, 'email_verified_at' => null]);
 })->group('feature', 'database', 'models');
 
-it('creates ideas with a fresh owner each', function () {
+it('creates ideas with a fresh owner each', function (): void {
     Idea::factory()->count(3)->create();
 
     $this->assertDatabaseCount('ideas', 3);
     $this->assertDatabaseCount('users', 3);
 })->group('feature', 'database', 'models');
 
-it('creates ideas for a shared owner with for()', function () {
+it('creates ideas for a shared owner with for()', function (): void {
     $user = User::factory()->create();
 
     Idea::factory()->count(3)->for($user)->create();
@@ -34,7 +34,7 @@ it('creates ideas for a shared owner with for()', function () {
     expect(Idea::where('user_id', $user->id)->count())->toBe(3);
 })->group('feature', 'database', 'models');
 
-it('only produces known idea states', function () {
+it('only produces known idea states', function (): void {
     $states = Idea::factory()->count(20)->create()->pluck('state')->unique();
 
     expect($states->every(fn (IdeaState $state): bool => in_array($state, IdeaState::cases(), true)))->toBeTrue();

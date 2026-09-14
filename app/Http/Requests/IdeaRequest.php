@@ -15,7 +15,7 @@ class IdeaRequest extends FormRequest
         return true;
     }
 
-     /**
+    /**
      * Prepare the data for validation.
      */
     protected function prepareForValidation(): void
@@ -26,7 +26,6 @@ class IdeaRequest extends FormRequest
             'state' => trim($this->input('state', '')),
         ]);
     }
-
 
     /**
      * Get the validation rules that apply to the request.
@@ -50,8 +49,8 @@ class IdeaRequest extends FormRequest
             ],
             'state' => [
                 'required',
-                'in:' .
-                    implode(',', array_map(fn($state) => $state->value, IdeaState::cases())),
+                'in:'.
+                    implode(',', array_map(fn ($state) => $state->value, IdeaState::cases())),
             ],
         ];
     }

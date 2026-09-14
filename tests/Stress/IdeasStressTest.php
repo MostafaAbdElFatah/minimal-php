@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 use function Pest\Stressless\stress;
 
-it('redirects guests from the idea index under load', function () {
+it('redirects guests from the idea index under load', function (): void {
     $result = stress(stressUrl('/'))
         ->concurrently(30)
         ->for(10)->seconds();
@@ -27,7 +27,7 @@ it('redirects guests from the idea index under load', function () {
         ->and($result->requests()->duration()->p95())->toBeLessThan(baselineP95('ideas-index-guest') * 1.2);
 })->group('stress', 'controllers');
 
-it('serves the static about page under load', function () {
+it('serves the static about page under load', function (): void {
     $result = stress(stressUrl('/about'))
         ->concurrently(30)
         ->for(10)->seconds();

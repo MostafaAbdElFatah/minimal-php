@@ -8,23 +8,23 @@ use Illuminate\Support\Facades\Auth;
 
 covers(SessionsController::class);
 
-describe('login page', function () {
-    it('renders the login form for guests', function () {
+describe('login page', function (): void {
+    it('renders the login form for guests', function (): void {
         $this->get(route('login'))
             ->assertOk()
             ->assertViewIs('auth.login')
             ->assertSee('Sign in to IdeaHub');
     });
 
-    it('redirects authenticated users away from the login form', function () {
+    it('redirects authenticated users away from the login form', function (): void {
         $this->actingAs(User::factory()->create())
             ->get(route('login'))
             ->assertRedirect('/');
     });
 })->group('feature', 'auth');
 
-describe('signing in', function () {
-    it('authenticates a user with valid credentials and regenerates the session', function () {
+describe('signing in', function (): void {
+    it('authenticates a user with valid credentials and regenerates the session', function (): void {
         $user = User::factory()->create(['password' => 'secret-password']);
         $this->startSession();
         $sessionId = session()->getId();
@@ -39,7 +39,7 @@ describe('signing in', function () {
         expect(session()->getId())->not->toBe($sessionId);
     });
 
-    it('issues a remember cookie when remember me is checked', function () {
+    it('issues a remember cookie when remember me is checked', function (): void {
         $user = User::factory()->create(['password' => 'secret-password']);
 
         $response = $this->post(route('login'), [
@@ -52,14 +52,14 @@ describe('signing in', function () {
         $this->assertAuthenticatedAs($user);
     });
 
-    it('does not issue a remember cookie by default', function () {
+    it('does not issue a remember cookie by default', function (): void {
         $user = User::factory()->create(['password' => 'secret-password']);
 
         $this->post(route('login'), ['email' => $user->email, 'password' => 'secret-password'])
             ->assertCookieMissing(Auth::guard()->getRecallerName());
     });
 
-    it('trims surrounding whitespace from the credentials', function () {
+    it('trims surrounding whitespace from the credentials', function (): void {
         $user = User::factory()->create(['password' => 'secret-password']);
 
         $this->post(route('login'), [
@@ -70,7 +70,7 @@ describe('signing in', function () {
         $this->assertAuthenticatedAs($user);
     });
 
-    it('rejects credentials that do not match and keeps the email in the form', function (string $email, string $password) {
+    it('rejects credentials that do not match and keeps the email in the form', function (string $email, string $password): void {
         User::factory()->create(['email' => 'jane@example.com', 'password' => 'secret-password']);
 
         $response = $this->from(route('login'))->post(route('login'), [
@@ -89,7 +89,7 @@ describe('signing in', function () {
         'unknown user' => ['ghost@example.com', 'anything'],
     ]);
 
-    it('rejects a malformed payload before attempting authentication', function () {
+    it('rejects a malformed payload before attempting authentication', function (): void {
         $response = $this->from(route('login'))->post(route('login'), [
             'email' => 'not-an-email',
             'password' => '',
@@ -102,7 +102,7 @@ describe('signing in', function () {
         $this->assertGuest();
     });
 
-    it('rejects an email longer than 255 characters', function () {
+    it('rejects an email longer than 255 characters', function (): void {
         $this->from(route('login'))->post(route('login'), [
             'email' => str_repeat('a', 244).'@example.com',
             'password' => 'secret-password',
@@ -111,7 +111,7 @@ describe('signing in', function () {
         $this->assertGuest();
     });
 
-    it('reports missing credentials as required rather than as a failed login', function () {
+    it('reports missing credentials as required rather than as a failed login', function (): void {
         $this->from(route('login'))->post(route('login'), [])
             ->assertSessionHasErrors([
                 'email' => 'The email field is required.',
@@ -121,7 +121,7 @@ describe('signing in', function () {
         $this->assertGuest();
     });
 
-    it('rejects a non-string password before attempting authentication', function () {
+    it('rejects a non-string password before attempting authentication', function (): void {
         $user = User::factory()->create(['password' => 'secret-password']);
 
         $this->from(route('login'))->post(route('login'), [
@@ -132,7 +132,7 @@ describe('signing in', function () {
         $this->assertGuest();
     })->todo('SessionsController trims the raw input before validating, so an array password raises a TypeError (500) instead of a validation error.');
 
-    it('redirects an already authenticated user without re-authenticating', function () {
+    it('redirects an already authenticated user without re-authenticating', function (): void {
         $user = User::factory()->create();
         $other = User::factory()->create(['password' => 'secret-password']);
 

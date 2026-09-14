@@ -10,7 +10,7 @@ use Symfony\Component\Console\Exception\RuntimeException;
 
 covers(CreateAdminUser::class);
 
-it('creates an admin user with a hashed password', function () {
+it('creates an admin user with a hashed password', function (): void {
     $this->artisan('make:admin', ['email' => 'admin@example.com', 'password' => 'secret-password'])
         ->expectsOutput('Admin user created: admin@example.com')
         ->assertExitCode(0);
@@ -22,7 +22,7 @@ it('creates an admin user with a hashed password', function () {
         ->and(Hash::check('secret-password', $user->password))->toBeTrue();
 })->group('feature', 'console');
 
-it('updates the existing user with the same email instead of duplicating', function () {
+it('updates the existing user with the same email instead of duplicating', function (): void {
     $user = User::factory()->create(['email' => 'admin@example.com', 'first_name' => 'Old', 'password' => 'old-password']);
 
     $this->artisan('make:admin', ['email' => 'admin@example.com', 'password' => 'new-password'])
@@ -33,7 +33,7 @@ it('updates the existing user with the same email instead of duplicating', funct
         ->and(Hash::check('new-password', $user->fresh()->password))->toBeTrue();
 })->group('feature', 'console');
 
-it('fails when the arguments are missing', function (array $arguments) {
+it('fails when the arguments are missing', function (array $arguments): void {
     expect(fn () => $this->artisan('make:admin', $arguments))->toThrow(RuntimeException::class);
 
     $this->assertDatabaseCount('users', 0);
@@ -42,6 +42,6 @@ it('fails when the arguments are missing', function (array $arguments) {
     'password missing' => [['email' => 'admin@example.com']],
 ])->group('feature', 'console');
 
-it('registers no scheduled tasks', function () {
+it('registers no scheduled tasks', function (): void {
     expect(app(Schedule::class)->events())->toBeEmpty();
 })->group('feature', 'console');

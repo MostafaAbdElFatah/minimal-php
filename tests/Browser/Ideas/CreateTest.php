@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use App\Models\User;
 
-it('creates an idea through the form', function () {
+it('creates an idea through the form', function (): void {
     $user = User::factory()->create(['password' => 'password']);
 
     loginAs($user)
@@ -23,7 +23,7 @@ it('creates an idea through the form', function () {
     $this->assertDatabaseHas('ideas', ['title' => 'A browser-created idea', 'state' => 'active', 'user_id' => $user->id]);
 })->group('browser', 'controllers');
 
-it('creates an idea on a mobile viewport', function () {
+it('creates an idea on a mobile viewport', function (): void {
     $user = User::factory()->create(['password' => 'password']);
 
     visit(route('login'))->on()->mobile()
@@ -42,7 +42,7 @@ it('creates an idea on a mobile viewport', function () {
     $this->assertDatabaseHas('ideas', ['title' => 'A mobile idea', 'user_id' => $user->id]);
 })->group('browser', 'controllers');
 
-it('shows the server-side message for an invalid field and keeps the input', function (array $overrides, string $message) {
+it('shows the server-side message for an invalid field and keeps the input', function (array $overrides, string $message): void {
     $user = User::factory()->create(['password' => 'password']);
     $form = ['title' => 'A valid idea title', 'description' => 'A valid description for the idea.', ...$overrides];
 

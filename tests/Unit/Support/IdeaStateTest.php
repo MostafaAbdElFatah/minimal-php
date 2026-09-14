@@ -6,7 +6,7 @@ use App\Enums\IdeaState;
 
 covers(IdeaState::class);
 
-test('every state maps to its badge color', function (IdeaState $state, string $color) {
+test('every state maps to its badge color', function (IdeaState $state, string $color): void {
     expect($state->color())->toBe($color);
 })->with([
     'pending is yellow' => [IdeaState::PENDING, 'yellow'],
@@ -19,11 +19,11 @@ test('every state maps to its badge color', function (IdeaState $state, string $
     'archived is purple' => [IdeaState::ARCHIVED, 'purple'],
 ])->group('unit', 'models');
 
-test('the stored values are the lowercase state names', function () {
+test('the stored values are the lowercase state names', function (): void {
     expect(array_map(fn (IdeaState $state): string => $state->value, IdeaState::cases()))
         ->toBe(['pending', 'active', 'complete', 'incomplete', 'draft', 'paused', 'cancelled', 'archived']);
 })->group('unit', 'models');
 
-test('an unknown stored value cannot be cast to a state', function () {
+test('an unknown stored value cannot be cast to a state', function (): void {
     expect(IdeaState::tryFrom('unknown'))->toBeNull();
 })->group('unit', 'models');

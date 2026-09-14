@@ -16,13 +16,13 @@ function ideaOwnedBy(User $owner): Idea
     return Idea::factory()->make(['user_id' => $owner->id])->setRelation('user', $owner);
 }
 
-test('nobody may list every idea', function () {
+test('nobody may list every idea', function (): void {
     $user = (new User)->forceFill(['id' => 1]);
 
     expect((new IdeaPolicy)->viewAny($user))->toBeFalse();
 })->group('unit', 'policies');
 
-test('the owner is allowed to view, update and delete their idea', function (string $ability) {
+test('the owner is allowed to view, update and delete their idea', function (string $ability): void {
     $owner = User::factory()->make()->forceFill(['id' => 1]);
     $idea = ideaOwnedBy($owner);
 
@@ -31,7 +31,7 @@ test('the owner is allowed to view, update and delete their idea', function (str
     expect($response->allowed())->toBeTrue();
 })->with(['view', 'update', 'delete'])->group('unit', 'policies');
 
-test('another user is denied as not found so the idea is never revealed', function (string $ability) {
+test('another user is denied as not found so the idea is never revealed', function (string $ability): void {
     $owner = User::factory()->make()->forceFill(['id' => 1]);
     $stranger = User::factory()->make()->forceFill(['id' => 2]);
     $idea = ideaOwnedBy($owner);

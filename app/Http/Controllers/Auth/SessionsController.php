@@ -1,17 +1,13 @@
 <?php
 
-
 namespace App\Http\Controllers\Auth;
 
-
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Auth;
 
 class SessionsController extends Controller
 {
-
     /**
      * Show the form for creating a new resource.
      */
@@ -42,6 +38,7 @@ class SessionsController extends Controller
         }
 
         $request->session()->regenerate();
+
         return redirect('/')->with('status', 'You are now logged in.');
     }
 

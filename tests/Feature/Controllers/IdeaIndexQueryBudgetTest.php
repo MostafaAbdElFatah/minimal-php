@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 covers(IdeaController::class);
 
-it('keeps the paginated index within a fixed query budget regardless of dataset size', function () {
+it('keeps the paginated index within a fixed query budget regardless of dataset size', function (): void {
     $user = User::factory()->create();
     Idea::factory()->count(100)->for($user)->create();
     DB::enableQueryLog();

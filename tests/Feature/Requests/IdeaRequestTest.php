@@ -13,7 +13,7 @@ covers(IdeaRequest::class);
  * The value matrix lives in tests/Unit/Requests/IdeaRequestTest.php. These tests
  * prove the routes apply the request and the user receives the message.
  */
-it('rejects an empty payload on store with every required field', function () {
+it('rejects an empty payload on store with every required field', function (): void {
     $this->actingAs(User::factory()->create())
         ->from('/ideas/create')
         ->post('/ideas/create', [])
@@ -25,7 +25,7 @@ it('rejects an empty payload on store with every required field', function () {
         ]);
 })->group('feature', 'requests');
 
-it('applies the same rules on update', function () {
+it('applies the same rules on update', function (): void {
     $user = User::factory()->create();
     $idea = Idea::factory()->for($user)->create();
 
@@ -39,7 +39,7 @@ it('applies the same rules on update', function () {
         ]);
 })->group('feature', 'requests');
 
-it('trims whitespace before validating and storing', function () {
+it('trims whitespace before validating and storing', function (): void {
     $user = User::factory()->create();
 
     $this->actingAs($user)->post('/ideas/create', [
@@ -56,14 +56,14 @@ it('trims whitespace before validating and storing', function () {
     ]);
 })->group('feature', 'requests');
 
-it('treats a whitespace-only title as missing', function () {
+it('treats a whitespace-only title as missing', function (): void {
     $this->actingAs(User::factory()->create())
         ->from('/ideas/create')
         ->post('/ideas/create', ['title' => '   ', 'description' => 'A description that is long enough.', 'state' => 'active'])
         ->assertSessionHasErrors(['title' => 'The title field is required.']);
 })->group('feature', 'requests');
 
-it('re-populates the form with the previous input after a failure', function () {
+it('re-populates the form with the previous input after a failure', function (): void {
     $this->actingAs(User::factory()->create())
         ->from('/ideas/create')
         ->post('/ideas/create', ['title' => 'Kept title', 'description' => 'short', 'state' => 'draft'])

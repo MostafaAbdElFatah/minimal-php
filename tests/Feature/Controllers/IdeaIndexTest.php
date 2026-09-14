@@ -10,7 +10,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 covers(IdeaController::class);
 
-it('lists only the authenticated users ideas with their count', function () {
+it('lists only the authenticated users ideas with their count', function (): void {
     $user = User::factory()->create();
     $mine = Idea::factory()->count(2)->for($user)->sequence(
         ['title' => 'First idea'],
@@ -29,7 +29,7 @@ it('lists only the authenticated users ideas with their count', function () {
         ->assertViewHas('ideas', fn (LengthAwarePaginator $ideas): bool => $ideas->pluck('id')->sort()->values()->all() === $mine->pluck('id')->sort()->values()->all());
 });
 
-it('filters ideas by state', function () {
+it('filters ideas by state', function (): void {
     $user = User::factory()->create();
     $active = Idea::factory()->for($user)->create(['state' => IdeaState::ACTIVE]);
     Idea::factory()->for($user)->create(['state' => IdeaState::PENDING]);
@@ -41,7 +41,7 @@ it('filters ideas by state', function () {
         ->assertViewHas('ideas', fn (LengthAwarePaginator $ideas): bool => $ideas->count() === 1 && $ideas->first()->is($active));
 });
 
-it('shows the filtered empty state when no idea matches the filter', function () {
+it('shows the filtered empty state when no idea matches the filter', function (): void {
     $user = User::factory()->create();
     Idea::factory()->for($user)->create(['state' => IdeaState::PENDING]);
 
@@ -53,7 +53,7 @@ it('shows the filtered empty state when no idea matches the filter', function ()
         ->assertSee('Clear Filter');
 });
 
-it('returns no ideas for an unknown state instead of failing', function () {
+it('returns no ideas for an unknown state instead of failing', function (): void {
     $user = User::factory()->create();
     Idea::factory()->for($user)->create();
 
@@ -63,7 +63,7 @@ it('returns no ideas for an unknown state instead of failing', function () {
         ->assertSee('No ideas found');
 });
 
-it('shows the onboarding empty state when the user has no ideas', function () {
+it('shows the onboarding empty state when the user has no ideas', function (): void {
     $this->actingAs(User::factory()->create())->get(route('home'))
         ->assertOk()
         ->assertSee('No ideas yet')
@@ -71,14 +71,14 @@ it('shows the onboarding empty state when the user has no ideas', function () {
         ->assertDontSee('Delete All Ideas');
 });
 
-it('shows the delete all button only when ideas exist', function () {
+it('shows the delete all button only when ideas exist', function (): void {
     $user = User::factory()->create();
     Idea::factory()->for($user)->create();
 
     $this->actingAs($user)->get(route('home'))->assertSee('Delete All Ideas');
 });
 
-it('paginates ten ideas per page', function (int $total, int $lastPage) {
+it('paginates ten ideas per page', function (int $total, int $lastPage): void {
     $user = User::factory()->create();
     Idea::factory()->count($total)->for($user)->create();
 
@@ -89,7 +89,7 @@ it('paginates ten ideas per page', function (int $total, int $lastPage) {
         && $ideas->lastPage() === $lastPage);
 })->with('idea page sizes');
 
-it('renders pagination controls when there is more than one page', function () {
+it('renders pagination controls when there is more than one page', function (): void {
     $user = User::factory()->create();
     Idea::factory()->count(11)->for($user)->create();
 
@@ -99,7 +99,7 @@ it('renders pagination controls when there is more than one page', function () {
         ->assertSee('aria-current="page"', false);
 });
 
-it('escapes idea titles and descriptions in the list', function () {
+it('escapes idea titles and descriptions in the list', function (): void {
     $user = User::factory()->create();
     Idea::factory()->for($user)->create([
         'title' => '<b>bold</b> title',
@@ -112,6 +112,6 @@ it('escapes idea titles and descriptions in the list', function () {
         ->assertSee('&lt;b&gt;bold&lt;/b&gt;', false);
 });
 
-it('redirects guests to the login page', function () {
+it('redirects guests to the login page', function (): void {
     $this->get(route('home'))->assertRedirect(route('login'));
 });

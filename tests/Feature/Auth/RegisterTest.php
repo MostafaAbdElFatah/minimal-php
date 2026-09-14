@@ -8,23 +8,23 @@ use Illuminate\Support\Facades\Hash;
 
 covers(RegisterUserController::class);
 
-describe('registration page', function () {
-    it('renders the registration form for guests', function () {
+describe('registration page', function (): void {
+    it('renders the registration form for guests', function (): void {
         $this->get(route('register'))
             ->assertOk()
             ->assertViewIs('auth.register')
             ->assertSee('Create your IdeaHub account');
     });
 
-    it('redirects authenticated users away from the registration form', function () {
+    it('redirects authenticated users away from the registration form', function (): void {
         $this->actingAs(User::factory()->create())
             ->get(route('register'))
             ->assertRedirect('/');
     });
 })->group('feature', 'auth');
 
-describe('creating an account', function () {
-    it('stores a trimmed user with a hashed password and signs them in', function () {
+describe('creating an account', function (): void {
+    it('stores a trimmed user with a hashed password and signs them in', function (): void {
         $response = $this->post(route('register'), [
             'first_name' => '  Jane  ',
             'last_name' => '  Doe  ',
@@ -45,7 +45,7 @@ describe('creating an account', function () {
             ->and($user->email_verified_at)->toBeNull();
     });
 
-    it('rejects an email that is already registered and creates nothing', function () {
+    it('rejects an email that is already registered and creates nothing', function (): void {
         User::factory()->create(['email' => 'jane@example.com']);
 
         $response = $this->from(route('register'))->post(route('register'), [
@@ -62,7 +62,7 @@ describe('creating an account', function () {
         $this->assertDatabaseCount('users', 1);
     });
 
-    it('rejects an empty payload and creates nothing', function () {
+    it('rejects an empty payload and creates nothing', function (): void {
         $response = $this->from(route('register'))->post(route('register'), []);
 
         $response->assertRedirect(route('register'))
@@ -71,7 +71,7 @@ describe('creating an account', function () {
         $this->assertDatabaseCount('users', 0);
     });
 
-    it('redirects an authenticated user without creating another account', function () {
+    it('redirects an authenticated user without creating another account', function (): void {
         $this->actingAs(User::factory()->create());
 
         $this->post(route('register'), [

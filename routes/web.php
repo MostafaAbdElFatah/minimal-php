@@ -13,7 +13,7 @@ Route::view('/welcome', 'welcome', [
     'tasks' => ['Task 1', 'Task 2', 'Task 3'],
 ]);
 
-Route::middleware('guest')->group(function () {
+Route::middleware('guest')->group(function (): void {
     // ==============================================================
     //       Auth routes
     // ==============================================================
@@ -27,7 +27,7 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [SessionsController::class, 'store']);
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth')->group(function (): void {
 
     // ==============================================================
     //       Ideas routes

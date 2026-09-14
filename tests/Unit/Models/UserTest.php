@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Hash;
 
 covers(User::class);
 
-it('has many ideas keyed by user_id', function () {
+it('has many ideas keyed by user_id', function (): void {
     $relation = (new User)->ideas();
 
     expect($relation)->toBeInstanceOf(HasMany::class)
@@ -18,7 +18,7 @@ it('has many ideas keyed by user_id', function () {
         ->and($relation->getRelated())->toBeInstanceOf(Idea::class);
 })->group('unit', 'models');
 
-it('treats only the first user as an admin', function (?int $id, bool $expected) {
+it('treats only the first user as an admin', function (?int $id, bool $expected): void {
     $user = (new User)->forceFill(['id' => $id]);
 
     expect($user->isAdmin())->toBe($expected);
@@ -28,7 +28,7 @@ it('treats only the first user as an admin', function (?int $id, bool $expected)
     'unsaved user is not' => [null, false],
 ])->group('unit', 'models');
 
-it('hides the password and remember token when serialized', function () {
+it('hides the password and remember token when serialized', function (): void {
     $user = User::factory()->make();
 
     expect($user->toArray())
@@ -37,21 +37,21 @@ it('hides the password and remember token when serialized', function () {
         ->toHaveKeys(['first_name', 'last_name', 'email', 'email_verified_at']);
 })->group('unit', 'models');
 
-it('hashes a plain password on assignment', function () {
+it('hashes a plain password on assignment', function (): void {
     $user = new User(['password' => 'plain-password']);
 
     expect($user->password)->not->toBe('plain-password')
         ->and(Hash::check('plain-password', $user->password))->toBeTrue();
 })->group('unit', 'models');
 
-it('casts the email verification timestamp to Carbon', function () {
+it('casts the email verification timestamp to Carbon', function (): void {
     $user = User::factory()->make(['email_verified_at' => '2026-01-01 12:00:00']);
 
     expect($user->email_verified_at)->toBeInstanceOf(Carbon::class)
         ->and($user->email_verified_at->toDateTimeString())->toBe('2026-01-01 12:00:00');
 })->group('unit', 'models');
 
-it('reports an unverified factory user as unverified', function () {
+it('reports an unverified factory user as unverified', function (): void {
     $user = User::factory()->unverified()->make();
 
     expect($user->email_verified_at)->toBeNull();

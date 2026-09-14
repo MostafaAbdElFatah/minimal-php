@@ -5,7 +5,7 @@ declare(strict_types=1);
 use App\Models\Idea;
 use App\Models\User;
 
-it('edits an idea from its detail page', function () {
+it('edits an idea from its detail page', function (): void {
     $user = User::factory()->create(['password' => 'password']);
     $idea = Idea::factory()->for($user)->create(['title' => 'Original browser title', 'description' => 'Original browser description.']);
 
@@ -27,7 +27,7 @@ it('edits an idea from its detail page', function () {
     $this->assertDatabaseHas('ideas', ['id' => $idea->id, 'title' => 'Updated browser title', 'state' => 'complete']);
 })->group('browser', 'controllers');
 
-it('shows a validation error and keeps the original idea when the edit is invalid', function () {
+it('shows a validation error and keeps the original idea when the edit is invalid', function (): void {
     $user = User::factory()->create(['password' => 'password']);
     $idea = Idea::factory()->for($user)->create(['title' => 'Original browser title']);
 

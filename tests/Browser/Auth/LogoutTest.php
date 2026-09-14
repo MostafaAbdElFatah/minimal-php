@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use App\Models\User;
 
-it('registers, logs out from the account menu and logs back in', function () {
+it('registers, logs out from the account menu and logs back in', function (): void {
     $page = visit(route('register'));
     foreach (['first_name' => 'Jane', 'last_name' => 'Doe', 'email' => 'jane-browser@example.com', 'password' => 'jane-password', 'password_confirmation' => 'jane-password'] as $field => $value) {
         $page->fill($field, $value);
@@ -23,7 +23,7 @@ it('registers, logs out from the account menu and logs back in', function () {
         ->assertNoJavaScriptErrors();
 })->group('browser', 'auth');
 
-it('cannot reach protected pages after logging out', function () {
+it('cannot reach protected pages after logging out', function (): void {
     $user = User::factory()->create(['password' => 'password']);
 
     loginAs($user)

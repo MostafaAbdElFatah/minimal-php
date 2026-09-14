@@ -15,28 +15,28 @@ class IdeaSeeder extends Seeder
     {
         Idea::factory()->count(200)->create(['user_id' => 2]);
 
-        //fetch all ids
-        //$userIds = User::pluck('id')->toArray();
+        // fetch all ids
+        // $userIds = User::pluck('id')->toArray();
 
-        //fetch all ids expect 1
+        // fetch all ids expect 1
         $userIds = User::where('id', '!=', 1)
             ->pluck('id')
             ->toArray();
 
-        //fetch all ids expect 1, 2, 3
+        // fetch all ids expect 1, 2, 3
         // $userIds = User::whereNotIn('id', [1, 2, 3])
         //     ->pluck('id')
         //     ->toArray();
 
-        ///random user_Id in each record in 600 record
+        // /random user_Id in each record in 600 record
         Idea::factory()
             ->count(600)
-            ->state(fn() => [
+            ->state(fn () => [
                 'user_id' => fake()->randomElement($userIds),
             ])
             ->create();
 
-        //same user_Id in all 600 record
+        // same user_Id in all 600 record
         // Idea::factory()->count(600)->create([
         //     'user_id' => fake()->randomElement($userIds),
         // ]);

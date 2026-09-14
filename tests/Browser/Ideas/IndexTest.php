@@ -6,7 +6,7 @@ use App\Enums\IdeaState;
 use App\Models\Idea;
 use App\Models\User;
 
-it('lists the users ideas with their count', function () {
+it('lists the users ideas with their count', function (): void {
     $user = User::factory()->create(['password' => 'password']);
     Idea::factory()->for($user)->create(['title' => 'First browser idea', 'state' => IdeaState::ACTIVE]);
     Idea::factory()->for($user)->create(['title' => 'Second browser idea', 'state' => IdeaState::PENDING]);
@@ -20,7 +20,7 @@ it('lists the users ideas with their count', function () {
         ->assertNoJavaScriptErrors();
 })->group('browser', 'controllers');
 
-it('filters the list when a state is picked and clears it again', function () {
+it('filters the list when a state is picked and clears it again', function (): void {
     $user = User::factory()->create(['password' => 'password']);
     Idea::factory()->for($user)->create(['title' => 'Active idea', 'state' => IdeaState::ACTIVE]);
     Idea::factory()->for($user)->create(['title' => 'Pending idea', 'state' => IdeaState::PENDING]);
@@ -37,7 +37,7 @@ it('filters the list when a state is picked and clears it again', function () {
         ->assertNoJavaScriptErrors();
 })->group('browser', 'controllers');
 
-it('pages through more than ten ideas', function () {
+it('pages through more than ten ideas', function (): void {
     $user = User::factory()->create(['password' => 'password']);
     Idea::factory()->count(11)->for($user)->create();
 

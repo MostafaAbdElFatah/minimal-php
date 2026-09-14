@@ -19,7 +19,7 @@ function registrationForm(array $overrides = []): array
     ];
 }
 
-it('registers a new user and lands on their empty idea list', function () {
+it('registers a new user and lands on their empty idea list', function (): void {
     $page = visit(route('register'))->assertNoJavaScriptErrors();
     foreach (registrationForm() as $field => $value) {
         $page->fill($field, $value);
@@ -33,7 +33,7 @@ it('registers a new user and lands on their empty idea list', function () {
     $this->assertDatabaseHas('users', ['email' => 'jane@example.com', 'first_name' => 'Jane']);
 })->group('browser', 'auth');
 
-it('registers on a mobile viewport', function () {
+it('registers on a mobile viewport', function (): void {
     $page = visit(route('register'))->on()->mobile()->assertNoJavaScriptErrors();
     foreach (registrationForm() as $field => $value) {
         $page->fill($field, $value);
@@ -44,7 +44,7 @@ it('registers on a mobile viewport', function () {
     $this->assertDatabaseHas('users', ['email' => 'jane@example.com']);
 })->group('browser', 'auth');
 
-it('shows the server-side message for each invalid field and keeps the user on the form', function (array $overrides, string $message) {
+it('shows the server-side message for each invalid field and keeps the user on the form', function (array $overrides, string $message): void {
     User::factory()->create(['email' => 'taken@example.com']);
     $page = visit(route('register'));
     $page->script('document.querySelector("main form").noValidate = true;');
@@ -69,7 +69,7 @@ it('shows the server-side message for each invalid field and keeps the user on t
     'short password' => [['password' => '123', 'password_confirmation' => '123'], 'The password field must be at least 8 characters.'],
 ])->group('browser', 'auth');
 
-it('updates the password strength meter while typing', function () {
+it('updates the password strength meter while typing', function (): void {
     visit(route('register'))
         ->fill('password', 'abc')
         ->assertSee('Very weak')

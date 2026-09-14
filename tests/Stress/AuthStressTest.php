@@ -21,7 +21,7 @@ declare(strict_types=1);
 
 use function Pest\Stressless\stress;
 
-it('serves the login page under 50 concurrent users', function () {
+it('serves the login page under 50 concurrent users', function (): void {
     $result = stress(stressUrl('/login'))
         ->concurrently(50)
         ->for(10)->seconds();
@@ -32,7 +32,7 @@ it('serves the login page under 50 concurrent users', function () {
         ->and($result->requests()->duration()->p95())->toBeLessThan(baselineP95('login-page') * 1.2);
 })->group('stress', 'auth');
 
-it('serves the registration page under 20 concurrent users', function () {
+it('serves the registration page under 20 concurrent users', function (): void {
     $result = stress(stressUrl('/register'))
         ->concurrently(20)
         ->for(10)->seconds();

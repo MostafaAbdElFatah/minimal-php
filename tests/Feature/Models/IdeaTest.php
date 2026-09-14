@@ -8,7 +8,7 @@ use App\Models\User;
 
 covers(Idea::class);
 
-it('persists a factory idea with an owner', function () {
+it('persists a factory idea with an owner', function (): void {
     $idea = Idea::factory()->create();
 
     $this->assertModelExists($idea);
@@ -18,14 +18,14 @@ it('persists a factory idea with an owner', function () {
         ->and($idea->state)->toBeInstanceOf(IdeaState::class);
 })->group('feature', 'models');
 
-it('round-trips the state enum through the database', function (IdeaState $state) {
+it('round-trips the state enum through the database', function (IdeaState $state): void {
     $idea = Idea::factory()->create(['state' => $state]);
 
     $this->assertDatabaseHas('ideas', ['id' => $idea->id, 'state' => $state->value]);
     expect($idea->fresh()->state)->toBe($state);
 })->with('idea states')->group('feature', 'models');
 
-it('defaults the state to pending when none is given', function () {
+it('defaults the state to pending when none is given', function (): void {
     $idea = Idea::query()->create([
         'title' => 'Untitled',
         'description' => 'No state supplied',
@@ -35,7 +35,7 @@ it('defaults the state to pending when none is given', function () {
     expect($idea->fresh()->state)->toBe(IdeaState::PENDING);
 })->group('feature', 'models');
 
-it('resolves its owner through the relationship', function () {
+it('resolves its owner through the relationship', function (): void {
     $user = User::factory()->create();
     $idea = Idea::factory()->for($user)->create();
 
@@ -43,7 +43,7 @@ it('resolves its owner through the relationship', function () {
         ->and($user->ideas->first()->is($idea))->toBeTrue();
 })->group('feature', 'models');
 
-it('touches updated_at when edited', function () {
+it('touches updated_at when edited', function (): void {
     $this->travelTo('2026-01-01 10:00:00');
     $idea = Idea::factory()->create();
 

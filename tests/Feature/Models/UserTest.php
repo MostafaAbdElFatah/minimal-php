@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Hash;
 
 covers(User::class);
 
-it('owns the ideas created through the relationship', function () {
+it('owns the ideas created through the relationship', function (): void {
     $user = User::factory()->create();
     Idea::factory()->count(2)->for($user)->create();
     Idea::factory()->create();
@@ -17,7 +17,7 @@ it('owns the ideas created through the relationship', function () {
         ->and($user->ideas->every(fn (Idea $idea): bool => $idea->user_id === $user->id))->toBeTrue();
 })->group('feature', 'models');
 
-it('eager loads ideas without lazy loading', function () {
+it('eager loads ideas without lazy loading', function (): void {
     $user = User::factory()->create();
     Idea::factory()->count(2)->for($user)->create();
 
@@ -26,14 +26,14 @@ it('eager loads ideas without lazy loading', function () {
     expect($loaded->relationLoaded('ideas'))->toBeTrue()->and($loaded->ideas)->toHaveCount(2);
 })->group('feature', 'models');
 
-it('stores the password hashed', function () {
+it('stores the password hashed', function (): void {
     $user = User::factory()->create(['password' => 'plain-password']);
 
     expect($user->getRawOriginal('password'))->not->toBe('plain-password')
         ->and(Hash::check('plain-password', $user->fresh()->password))->toBeTrue();
 })->group('feature', 'models');
 
-it('does not rehash an already hashed password', function () {
+it('does not rehash an already hashed password', function (): void {
     $hash = Hash::make('plain-password');
 
     $user = User::factory()->create(['password' => $hash]);
@@ -41,7 +41,7 @@ it('does not rehash an already hashed password', function () {
     expect($user->getRawOriginal('password'))->toBe($hash);
 })->group('feature', 'models');
 
-it('deletes its ideas when the user is deleted', function () {
+it('deletes its ideas when the user is deleted', function (): void {
     $user = User::factory()->create();
     $idea = Idea::factory()->for($user)->create();
     $otherIdea = Idea::factory()->create();
@@ -52,7 +52,7 @@ it('deletes its ideas when the user is deleted', function () {
     $this->assertModelExists($otherIdea);
 })->group('feature', 'models');
 
-it('is an admin only when it is the first user', function () {
+it('is an admin only when it is the first user', function (): void {
     $first = User::factory()->create();
     $second = User::factory()->create();
 

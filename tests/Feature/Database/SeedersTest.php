@@ -8,7 +8,7 @@ use Database\Seeders\IdeaSeeder;
 use Database\Seeders\UserSeeder;
 use Illuminate\Support\Facades\Hash;
 
-it('seeds the named admin and demo users with usable passwords', function () {
+it('seeds the named admin and demo users with usable passwords', function (): void {
     $this->seed(UserSeeder::class);
 
     $admin = User::firstWhere('email', 'admin@example.com');
@@ -20,7 +20,7 @@ it('seeds the named admin and demo users with usable passwords', function () {
     $this->assertDatabaseCount('users', 12);
 })->group('feature', 'database');
 
-it('does not duplicate the named users when the user seeder runs twice', function () {
+it('does not duplicate the named users when the user seeder runs twice', function (): void {
     $this->seed(UserSeeder::class);
     $this->seed(UserSeeder::class);
 
@@ -28,7 +28,7 @@ it('does not duplicate the named users when the user seeder runs twice', functio
         ->and(User::where('email', 'jane@example.com')->count())->toBe(1);
 })->group('feature', 'database');
 
-it('never assigns seeded ideas to the admin user', function () {
+it('never assigns seeded ideas to the admin user', function (): void {
     $this->seed(UserSeeder::class);
 
     $this->seed(IdeaSeeder::class);
@@ -38,7 +38,7 @@ it('never assigns seeded ideas to the admin user', function () {
         ->and(Idea::count())->toBe(800);
 })->group('feature', 'database');
 
-it('seeds the full demo dataset from the database seeder', function () {
+it('seeds the full demo dataset from the database seeder', function (): void {
     $this->seed();
 
     // UserSeeder (12) + 10 extra users + 100 ideas that each create their own owner

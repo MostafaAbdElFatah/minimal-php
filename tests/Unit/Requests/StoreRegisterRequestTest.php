@@ -38,13 +38,13 @@ function validRegistrationInput(): array
     ];
 }
 
-it('accepts a valid registration payload', function () {
+it('accepts a valid registration payload', function (): void {
     $validator = Validator::make(validRegistrationInput(), registrationRulesWithoutDatabase());
 
     expect($validator->passes())->toBeTrue();
 })->group('unit', 'requests');
 
-it('rejects an invalid name', function (string $field, string $value, string $message) {
+it('rejects an invalid name', function (string $field, string $value, string $message): void {
     $validator = Validator::make([...validRegistrationInput(), $field => $value], registrationRulesWithoutDatabase());
 
     expect($validator->errors()->first($field))->toBe($message);
@@ -57,13 +57,13 @@ it('rejects an invalid name', function (string $field, string $value, string $me
     'last name over 100 characters' => ['last_name', str_repeat('a', 101), 'The last name field must not be greater than 100 characters.'],
 ])->group('unit', 'requests');
 
-it('rejects an invalid email', function (string $email) {
+it('rejects an invalid email', function (string $email): void {
     $validator = Validator::make([...validRegistrationInput(), 'email' => $email], registrationRulesWithoutDatabase());
 
     expect($validator->errors()->has('email'))->toBeTrue();
 })->with('invalid emails')->group('unit', 'requests');
 
-it('rejects an invalid password', function (string $password, string $message) {
+it('rejects an invalid password', function (string $password, string $message): void {
     $validator = Validator::make([
         ...validRegistrationInput(),
         'password' => $password,
@@ -73,7 +73,7 @@ it('rejects an invalid password', function (string $password, string $message) {
     expect($validator->errors()->first('password'))->toBe($message);
 })->with('invalid passwords')->group('unit', 'requests');
 
-it('rejects a mismatched password confirmation', function () {
+it('rejects a mismatched password confirmation', function (): void {
     $validator = Validator::make([
         ...validRegistrationInput(),
         'password_confirmation' => 'different-password',
@@ -82,7 +82,7 @@ it('rejects a mismatched password confirmation', function () {
     expect($validator->errors()->first('password'))->toBe('The password field confirmation does not match.');
 })->group('unit', 'requests');
 
-it('accepts a password of exactly 8 characters', function () {
+it('accepts a password of exactly 8 characters', function (): void {
     $validator = Validator::make([
         ...validRegistrationInput(),
         'password' => 'abcdefgh',
@@ -92,7 +92,7 @@ it('accepts a password of exactly 8 characters', function () {
     expect($validator->passes())->toBeTrue();
 })->group('unit', 'requests');
 
-it('trims every field before validation', function () {
+it('trims every field before validation', function (): void {
     $request = StoreRegisterRequest::create('/register', 'POST', [
         'first_name' => ' Jane ',
         'last_name' => ' Doe ',
@@ -112,7 +112,7 @@ it('trims every field before validation', function () {
     ]);
 })->group('unit', 'requests');
 
-it('normalizes missing fields to empty strings so the required rule fires', function () {
+it('normalizes missing fields to empty strings so the required rule fires', function (): void {
     $request = StoreRegisterRequest::create('/register', 'POST');
 
     (new ReflectionMethod(StoreRegisterRequest::class, 'prepareForValidation'))->invoke($request);
@@ -126,7 +126,7 @@ it('normalizes missing fields to empty strings so the required rule fires', func
     ]);
 })->group('unit', 'requests');
 
-it('rejects non-string values for every text field', function (string $field) {
+it('rejects non-string values for every text field', function (string $field): void {
     $validator = Validator::make([...validRegistrationInput(), $field => ['not', 'a', 'string']], registrationRulesWithoutDatabase());
 
     expect($validator->errors()->first($field))->toBe('The '.str_replace('_', ' ', $field).' field must be a string.');

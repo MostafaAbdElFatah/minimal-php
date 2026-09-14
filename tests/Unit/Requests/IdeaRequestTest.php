@@ -20,30 +20,30 @@ function validIdeaInput(): array
     ];
 }
 
-it('authorizes every authenticated request', function () {
+it('authorizes every authenticated request', function (): void {
     expect((new IdeaRequest)->authorize())->toBeTrue();
 })->group('unit', 'requests');
 
-it('accepts a valid payload', function () {
+it('accepts a valid payload', function (): void {
     $validator = Validator::make(validIdeaInput(), (new IdeaRequest)->rules());
 
     expect($validator->passes())->toBeTrue();
 })->group('unit', 'requests');
 
-it('accepts every idea state', function (IdeaState $state) {
+it('accepts every idea state', function (IdeaState $state): void {
     $validator = Validator::make([...validIdeaInput(), 'state' => $state->value], (new IdeaRequest)->rules());
 
     expect($validator->passes())->toBeTrue();
 })->with('idea states')->group('unit', 'requests');
 
-it('rejects an invalid field with the expected message', function (array $overrides, string $field, string $message) {
+it('rejects an invalid field with the expected message', function (array $overrides, string $field, string $message): void {
     $validator = Validator::make([...validIdeaInput(), ...$overrides], (new IdeaRequest)->rules());
 
     expect($validator->fails())->toBeTrue()
         ->and($validator->errors()->first($field))->toBe($message);
 })->with('invalid idea payloads')->group('unit', 'requests');
 
-it('accepts boundary lengths for title and description', function (array $overrides) {
+it('accepts boundary lengths for title and description', function (array $overrides): void {
     $validator = Validator::make([...validIdeaInput(), ...$overrides], (new IdeaRequest)->rules());
 
     expect($validator->passes())->toBeTrue();
@@ -53,14 +53,14 @@ it('accepts boundary lengths for title and description', function (array $overri
     'description of exactly 10 characters' => [['description' => str_repeat('d', 10)]],
 ])->group('unit', 'requests');
 
-it('rejects a non-string title and description even when their size would pass', function () {
+it('rejects a non-string title and description even when their size would pass', function (): void {
     $validator = Validator::make([...validIdeaInput(), 'title' => ['a', 'b', 'c'], 'description' => 12345678901], (new IdeaRequest)->rules());
 
     expect($validator->errors()->first('title'))->toBe('The title field must be a string.')
         ->and($validator->errors()->first('description'))->toBe('The description field must be a string.');
 })->group('unit', 'requests');
 
-it('trims every field before validation', function () {
+it('trims every field before validation', function (): void {
     $request = IdeaRequest::create('/ideas/create', 'POST', [
         'title' => ' A title ',
         'description' => ' A long enough description. ',
@@ -76,7 +76,7 @@ it('trims every field before validation', function () {
     ]);
 })->group('unit', 'requests');
 
-it('normalizes missing fields to empty strings so the required rule fires', function () {
+it('normalizes missing fields to empty strings so the required rule fires', function (): void {
     $request = IdeaRequest::create('/ideas/create', 'POST');
 
     (new ReflectionMethod(IdeaRequest::class, 'prepareForValidation'))->invoke($request);

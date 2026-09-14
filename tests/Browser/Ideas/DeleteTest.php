@@ -5,7 +5,7 @@ declare(strict_types=1);
 use App\Models\Idea;
 use App\Models\User;
 
-it('deletes an idea from its detail page after confirming', function () {
+it('deletes an idea from its detail page after confirming', function (): void {
     $user = User::factory()->create(['password' => 'password']);
     $idea = Idea::factory()->for($user)->create(['title' => 'Idea to delete']);
 
@@ -21,7 +21,7 @@ it('deletes an idea from its detail page after confirming', function () {
     $this->assertModelMissing($idea);
 })->group('browser', 'controllers');
 
-it('keeps the idea when the confirmation is cancelled', function () {
+it('keeps the idea when the confirmation is cancelled', function (): void {
     $user = User::factory()->create(['password' => 'password']);
     $idea = Idea::factory()->for($user)->create(['title' => 'Idea to keep']);
 
@@ -36,7 +36,7 @@ it('keeps the idea when the confirmation is cancelled', function () {
     $this->assertModelExists($idea);
 })->group('browser', 'controllers');
 
-it('deletes every idea from the list after confirming', function () {
+it('deletes every idea from the list after confirming', function (): void {
     $user = User::factory()->create(['password' => 'password']);
     Idea::factory()->count(3)->for($user)->create();
 

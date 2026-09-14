@@ -19,7 +19,7 @@ dataset('idea endpoints', [
     'destroy' => ['delete', '/ideas/{idea}', []],
 ]);
 
-it('hides another users idea as 404', function (string $method, string $uri, array $payload) {
+it('hides another users idea as 404', function (string $method, string $uri, array $payload): void {
     $idea = Idea::factory()->create(['title' => 'Original']);
 
     $this->actingAs(User::factory()->create())
@@ -30,7 +30,7 @@ it('hides another users idea as 404', function (string $method, string $uri, arr
     expect($idea->fresh()->title)->toBe('Original');
 })->with('idea endpoints')->group('feature', 'controllers', 'policies');
 
-it('redirects guests to the login page', function (string $method, string $uri, array $payload) {
+it('redirects guests to the login page', function (string $method, string $uri, array $payload): void {
     $idea = Idea::factory()->create();
 
     $this->{$method}(str_replace('{idea}', (string) $idea->id, $uri), $payload)

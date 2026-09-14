@@ -11,8 +11,8 @@ use App\View\Components\idea\StatusFilter;
 
 covers(IdeaCard::class, IdeaStatus::class, StatusFilter::class);
 
-describe('idea status badge', function () {
-    it('renders the state label with its color classes', function (IdeaState $state) {
+describe('idea status badge', function (): void {
+    it('renders the state label with its color classes', function (IdeaState $state): void {
         $idea = Idea::factory()->make(['state' => $state, 'user_id' => 1]);
 
         $view = $this->blade('<x-idea.idea-status :idea="$idea" />', ['idea' => $idea]);
@@ -21,8 +21,8 @@ describe('idea status badge', function () {
     })->with('idea states');
 })->group('feature', 'components');
 
-describe('idea card', function () {
-    it('links to the idea and shows the escaped title and description', function () {
+describe('idea card', function (): void {
+    it('links to the idea and shows the escaped title and description', function (): void {
         $idea = Idea::factory()->create([
             'title' => 'Card <title>',
             'description' => 'Card description text',
@@ -39,8 +39,8 @@ describe('idea card', function () {
     });
 })->group('feature', 'components');
 
-describe('status filter', function () {
-    it('lists every state with All states first and nothing selected by default', function () {
+describe('status filter', function (): void {
+    it('lists every state with All states first and nothing selected by default', function (): void {
         $view = $this->blade('<x-idea.status-filter />');
 
         $view->assertSee('Filter by state')->assertSee('All states')->assertDontSee('selected', false)->assertDontSee('>Clear<', false);
@@ -49,7 +49,7 @@ describe('status filter', function () {
         }
     });
 
-    it('marks the current state as selected and offers a clear link', function () {
+    it('marks the current state as selected and offers a clear link', function (): void {
         $this->actingAs(User::factory()->create());
 
         $response = $this->get('/?state=paused');
@@ -58,15 +58,15 @@ describe('status filter', function () {
     });
 })->group('feature', 'components');
 
-describe('empty state', function () {
-    it('renders the onboarding message when not filtered', function () {
+describe('empty state', function (): void {
+    it('renders the onboarding message when not filtered', function (): void {
         $this->blade('<x-idea.empty-state />')
             ->assertSee('No ideas yet')
             ->assertSee('+ Create Your First Idea')
             ->assertDontSee('No ideas found');
     });
 
-    it('renders the filtered message with the escaped state when filtered', function () {
+    it('renders the filtered message with the escaped state when filtered', function (): void {
         $this->blade('<x-idea.empty-state :filtered="true" state="<b>x</b>" />')
             ->assertSee('No ideas found')
             ->assertSee('&lt;b&gt;x&lt;/b&gt;', false)
@@ -74,15 +74,15 @@ describe('empty state', function () {
     });
 })->group('feature', 'components');
 
-describe('form fields', function () {
-    it('pre-fill from the given value', function () {
+describe('form fields', function (): void {
+    it('pre-fill from the given value', function (): void {
         $this->withViewErrors([])->blade('<x-idea.title value="Given title" /><x-idea.description value="Given description" /><x-idea.state value="draft" />')
             ->assertSee('value="Given title"', false)
             ->assertSee('>Given description</textarea>', false)
             ->assertSee('value="draft"'."\n".'                class="bg-gray-800"'."\n".'                selected', false);
     });
 
-    it('prefer old input over the given value and show the error', function () {
+    it('prefer old input over the given value and show the error', function (): void {
         withOldInput(['title' => 'Old title']);
 
         $this->withViewErrors([])

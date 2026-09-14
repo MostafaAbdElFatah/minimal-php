@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use App\Models\User;
 
-it('logs in a user with valid credentials', function () {
+it('logs in a user with valid credentials', function (): void {
     $user = User::factory()->create(['password' => 'jane-password']);
 
     visit(route('login'))
@@ -18,7 +18,7 @@ it('logs in a user with valid credentials', function () {
         ->assertNoJavaScriptErrors();
 })->group('browser', 'auth');
 
-it('logs in on a mobile viewport', function () {
+it('logs in on a mobile viewport', function (): void {
     $user = User::factory()->create(['password' => 'jane-password']);
 
     visit(route('login'))->on()->mobile()
@@ -30,7 +30,7 @@ it('logs in on a mobile viewport', function () {
         ->assertNoJavaScriptErrors();
 })->group('browser', 'auth');
 
-it('shows the generic credentials error and keeps the email', function (string $email, string $password) {
+it('shows the generic credentials error and keeps the email', function (string $email, string $password): void {
     User::factory()->create(['email' => 'jane@example.com', 'password' => 'jane-password']);
 
     visit(route('login'))
@@ -48,7 +48,7 @@ it('shows the generic credentials error and keeps the email', function (string $
     'unknown user' => ['ghost@example.com', 'any-password'],
 ])->group('browser', 'auth');
 
-it('shows server-side validation errors when the browser validation is bypassed', function () {
+it('shows server-side validation errors when the browser validation is bypassed', function (): void {
     $page = visit(route('login'));
     $page->script('document.querySelector("main form").noValidate = true;');
 
@@ -60,7 +60,7 @@ it('shows server-side validation errors when the browser validation is bypassed'
         ->assertNoJavaScriptErrors();
 })->group('browser', 'auth');
 
-it('toggles password visibility without leaving the page', function () {
+it('toggles password visibility without leaving the page', function (): void {
     visit(route('login'))
         ->fill('password', 'visible-secret')
         ->assertAttribute('#password', 'type', 'password')

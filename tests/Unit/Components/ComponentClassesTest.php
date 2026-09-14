@@ -13,7 +13,7 @@ use Illuminate\Contracts\View\View;
 
 covers(IdeaCard::class, IdeaStatus::class, StatusFilter::class, nav_bar::class, theme::class, UserMenu::class);
 
-it('renders the matching Blade view', function (string $component, string $view, bool $needsIdea = false) {
+it('renders the matching Blade view', function (string $component, string $view, bool $needsIdea = false): void {
     $rendered = ($needsIdea ? new $component(Idea::factory()->make(['user_id' => 1])) : new $component)->render();
 
     expect($rendered)->toBeInstanceOf(View::class)
@@ -28,7 +28,7 @@ it('renders the matching Blade view', function (string $component, string $view,
     'user menu' => [UserMenu::class, 'components.user-menu'],
 ])->group('unit', 'components');
 
-it('exposes the idea to the card and status views', function (string $component) {
+it('exposes the idea to the card and status views', function (string $component): void {
     $idea = Idea::factory()->make(['title' => 'Exposed idea', 'user_id' => 1]);
 
     expect((new $component($idea))->idea)->toBe($idea);

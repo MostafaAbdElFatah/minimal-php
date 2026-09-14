@@ -9,8 +9,8 @@ use App\View\Components\UserMenu;
 
 covers(nav_bar::class, theme::class, UserMenu::class);
 
-describe('error', function () {
-    it('renders nothing without an error and the message with one', function () {
+describe('error', function (): void {
+    it('renders nothing without an error and the message with one', function (): void {
         $this->withViewErrors([])->blade('<x-error name="email" />')->assertDontSee('text-error', false);
 
         $this->withViewErrors(['email' => 'The email is wrong.'])
@@ -19,8 +19,8 @@ describe('error', function () {
     });
 })->group('feature', 'components');
 
-describe('status message', function () {
-    it('shows the flashed status and hides when there is none', function () {
+describe('status message', function (): void {
+    it('shows the flashed status and hides when there is none', function (): void {
         $this->blade('<x-status-message />')->assertDontSee('status-message', false);
 
         $this->withSession(['status' => 'Saved <ok>'])
@@ -30,8 +30,8 @@ describe('status message', function () {
     });
 })->group('feature', 'components');
 
-describe('card', function () {
-    it('renders header, slot and merged attributes', function () {
+describe('card', function (): void {
+    it('renders header, slot and merged attributes', function (): void {
         $this->blade('<x-card class="extra" header="Head" bgColor="#fff">Body text</x-card>')
             ->assertSee('Head')
             ->assertSee('Body text')
@@ -40,23 +40,23 @@ describe('card', function () {
     });
 })->group('feature', 'components');
 
-describe('layout', function () {
-    it('sets the title and shows the navigation by default', function () {
+describe('layout', function (): void {
+    it('sets the title and shows the navigation by default', function (): void {
         $this->blade('<x-layout title="Page title">Content</x-layout>')
             ->assertSee('<title>Page title</title>', false)
             ->assertSee('navbar')
             ->assertSee('Content');
     });
 
-    it('hides the navigation when asked', function () {
+    it('hides the navigation when asked', function (): void {
         $this->blade('<x-layout :show-nav="false">Content</x-layout>')
             ->assertDontSee('navbar')
             ->assertSee('Content');
     });
 })->group('feature', 'components');
 
-describe('auth inputs', function () {
-    it('render labelled fields with old values and errors', function () {
+describe('auth inputs', function (): void {
+    it('render labelled fields with old values and errors', function (): void {
         withOldInput(['email' => 'old@example.com', 'first_name' => 'Old']);
 
         $this->withViewErrors(['email' => 'The email is wrong.'])
@@ -68,7 +68,7 @@ describe('auth inputs', function () {
             ->assertSee('data-password-toggle="password"', false);
     });
 
-    it('echoes old password input, so the request layer must never flash it', function () {
+    it('echoes old password input, so the request layer must never flash it', function (): void {
         withOldInput(['password' => 'secret-password']);
 
         $this->withViewErrors([])
@@ -77,12 +77,12 @@ describe('auth inputs', function () {
     });
 })->group('feature', 'components');
 
-describe('user menu', function () {
-    it('offers login and register to guests', function () {
+describe('user menu', function (): void {
+    it('offers login and register to guests', function (): void {
         $this->withViewErrors([])->blade('<x-user-menu />')->assertSee('Login')->assertSee('Register')->assertDontSee('Logout');
     });
 
-    it('offers a logout form to the authenticated user', function () {
+    it('offers a logout form to the authenticated user', function (): void {
         $this->actingAs(User::factory()->create(['first_name' => 'Jane']));
 
         $this->withViewErrors([])->blade('<x-user-menu />')
@@ -93,8 +93,8 @@ describe('user menu', function () {
     });
 })->group('feature', 'components');
 
-describe('navigation', function () {
-    it('shows the admin link only to the admin', function () {
+describe('navigation', function (): void {
+    it('shows the admin link only to the admin', function (): void {
         $admin = User::factory()->create();
         $user = User::factory()->create();
 
@@ -102,7 +102,7 @@ describe('navigation', function () {
         $this->actingAs($user)->blade('<x-nav-bar />')->assertDontSee('href="/admin"', false);
     });
 
-    it('renders the theme picker with light and dark options', function () {
+    it('renders the theme picker with light and dark options', function (): void {
         $this->blade('<x-theme />')->assertSee('Theme')->assertSee('aria-label="Light"', false)->assertSee('aria-label="Dark"', false);
     });
 })->group('feature', 'components');

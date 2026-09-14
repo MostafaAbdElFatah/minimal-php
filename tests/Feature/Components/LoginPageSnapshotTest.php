@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-it('keeps the login page markup stable', function () {
+it('keeps the login page markup stable', function (): void {
     $html = $this->get(route('login'))->getContent();
     $normalizedHtml = preg_replace('/value="[^"]*"/', 'value="[normalized]"', $html);
 

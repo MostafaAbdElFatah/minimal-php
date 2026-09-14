@@ -22,8 +22,8 @@ function validIdeaPayload(array $overrides = []): array
     ];
 }
 
-describe('create', function () {
-    it('renders the new idea form', function () {
+describe('create', function (): void {
+    it('renders the new idea form', function (): void {
         $this->actingAs(User::factory()->create())
             ->get('/ideas/create')
             ->assertOk()
@@ -31,13 +31,13 @@ describe('create', function () {
             ->assertSee('New Idea');
     });
 
-    it('redirects guests to the login page', function () {
+    it('redirects guests to the login page', function (): void {
         $this->get('/ideas/create')->assertRedirect(route('login'));
     });
 })->group('feature', 'controllers');
 
-describe('store', function () {
-    it('creates an idea owned by the authenticated user', function () {
+describe('store', function (): void {
+    it('creates an idea owned by the authenticated user', function (): void {
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->post('/ideas/create', validIdeaPayload());
@@ -47,7 +47,7 @@ describe('store', function () {
         $this->assertDatabaseCount('ideas', 1);
     });
 
-    it('ignores a user_id supplied in the payload', function () {
+    it('ignores a user_id supplied in the payload', function (): void {
         $user = User::factory()->create();
         $victim = User::factory()->create();
 
@@ -57,7 +57,7 @@ describe('store', function () {
         $this->assertDatabaseMissing('ideas', ['user_id' => $victim->id]);
     });
 
-    it('stores nothing when validation fails', function () {
+    it('stores nothing when validation fails', function (): void {
         $this->actingAs(User::factory()->create())
             ->from('/ideas/create')
             ->post('/ideas/create', validIdeaPayload(['title' => '']))
@@ -67,15 +67,15 @@ describe('store', function () {
         $this->assertDatabaseCount('ideas', 0);
     });
 
-    it('redirects guests to the login page without storing anything', function () {
+    it('redirects guests to the login page without storing anything', function (): void {
         $this->post('/ideas/create', validIdeaPayload())->assertRedirect(route('login'));
 
         $this->assertDatabaseCount('ideas', 0);
     });
 })->group('feature', 'controllers');
 
-describe('show', function () {
-    it('renders an idea for its owner', function () {
+describe('show', function (): void {
+    it('renders an idea for its owner', function (): void {
         $user = User::factory()->create();
         $idea = Idea::factory()->for($user)->create(['title' => 'My idea', 'description' => 'A long description here.']);
 
@@ -87,7 +87,7 @@ describe('show', function () {
             ->assertSee('A long description here.');
     });
 
-    it('escapes user supplied content', function () {
+    it('escapes user supplied content', function (): void {
         $user = User::factory()->create();
         $idea = Idea::factory()->for($user)->create([
             'title' => '<script>alert("title")</script>',
@@ -102,25 +102,25 @@ describe('show', function () {
             ->assertSee('&lt;img src=x onerror=alert(1)&gt; long description', false);
     });
 
-    it('returns 404 for another users idea so its existence is not revealed', function () {
+    it('returns 404 for another users idea so its existence is not revealed', function (): void {
         $idea = Idea::factory()->create();
 
         $this->actingAs(User::factory()->create())->get("/ideas/{$idea->id}")->assertNotFound();
     });
 
-    it('returns 404 for a missing idea', function () {
+    it('returns 404 for a missing idea', function (): void {
         $this->actingAs(User::factory()->create())->get('/ideas/999999')->assertNotFound();
     });
 
-    it('redirects guests to the login page', function () {
+    it('redirects guests to the login page', function (): void {
         $idea = Idea::factory()->create();
 
         $this->get("/ideas/{$idea->id}")->assertRedirect(route('login'));
     });
 })->group('feature', 'controllers');
 
-describe('edit', function () {
-    it('renders the edit form with the current values for the owner', function () {
+describe('edit', function (): void {
+    it('renders the edit form with the current values for the owner', function (): void {
         $user = User::factory()->create();
         $idea = Idea::factory()->for($user)->create(['title' => 'Idea to edit', 'state' => IdeaState::PAUSED]);
 
@@ -132,21 +132,21 @@ describe('edit', function () {
             ->assertSee('value="paused"'."\n".'                class="bg-gray-800"'."\n".'                selected', false);
     });
 
-    it('returns 404 for another users idea', function () {
+    it('returns 404 for another users idea', function (): void {
         $idea = Idea::factory()->create();
 
         $this->actingAs(User::factory()->create())->get("/ideas/{$idea->id}/edit")->assertNotFound();
     });
 
-    it('redirects guests to the login page', function () {
+    it('redirects guests to the login page', function (): void {
         $idea = Idea::factory()->create();
 
         $this->get("/ideas/{$idea->id}/edit")->assertRedirect(route('login'));
     });
 })->group('feature', 'controllers');
 
-describe('update', function () {
-    it('updates an owned idea and redirects to it', function () {
+describe('update', function (): void {
+    it('updates an owned idea and redirects to it', function (): void {
         $user = User::factory()->create();
         $idea = Idea::factory()->for($user)->create(['state' => IdeaState::PENDING]);
 
@@ -165,7 +165,7 @@ describe('update', function () {
         ]);
     });
 
-    it('does not let the owner reassign the idea to another user', function () {
+    it('does not let the owner reassign the idea to another user', function (): void {
         $user = User::factory()->create();
         $victim = User::factory()->create();
         $idea = Idea::factory()->for($user)->create();
@@ -175,7 +175,7 @@ describe('update', function () {
         expect($idea->fresh()->user_id)->toBe($user->id);
     });
 
-    it('changes nothing when validation fails', function () {
+    it('changes nothing when validation fails', function (): void {
         $user = User::factory()->create();
         $idea = Idea::factory()->for($user)->create(['title' => 'Original title']);
 
@@ -188,7 +188,7 @@ describe('update', function () {
         expect($idea->fresh()->title)->toBe('Original title');
     });
 
-    it('returns 404 for another users idea and changes nothing', function () {
+    it('returns 404 for another users idea and changes nothing', function (): void {
         $idea = Idea::factory()->create(['title' => 'Original title']);
 
         $this->actingAs(User::factory()->create())
@@ -198,15 +198,15 @@ describe('update', function () {
         expect($idea->fresh()->title)->toBe('Original title');
     });
 
-    it('redirects guests to the login page', function () {
+    it('redirects guests to the login page', function (): void {
         $idea = Idea::factory()->create();
 
         $this->put("/ideas/{$idea->id}", validIdeaPayload())->assertRedirect(route('login'));
     });
 })->group('feature', 'controllers');
 
-describe('destroy', function () {
-    it('deletes an owned idea and redirects home', function () {
+describe('destroy', function (): void {
+    it('deletes an owned idea and redirects home', function (): void {
         $user = User::factory()->create();
         $idea = Idea::factory()->for($user)->create();
 
@@ -216,7 +216,7 @@ describe('destroy', function () {
         $this->assertModelMissing($idea);
     });
 
-    it('returns 404 for another users idea and keeps it', function () {
+    it('returns 404 for another users idea and keeps it', function (): void {
         $idea = Idea::factory()->create();
 
         $this->actingAs(User::factory()->create())->delete("/ideas/{$idea->id}")->assertNotFound();
@@ -224,7 +224,7 @@ describe('destroy', function () {
         $this->assertModelExists($idea);
     });
 
-    it('redirects guests to the login page and keeps the idea', function () {
+    it('redirects guests to the login page and keeps the idea', function (): void {
         $idea = Idea::factory()->create();
 
         $this->delete("/ideas/{$idea->id}")->assertRedirect(route('login'));

@@ -7,7 +7,7 @@ use App\Models\User;
 
 covers(SessionsController::class);
 
-it('logs the user out, invalidates the session and rotates the CSRF token', function () {
+it('logs the user out, invalidates the session and rotates the CSRF token', function (): void {
     $this->actingAs(User::factory()->create());
     session(['logout-marker' => 'present']);
     $sessionId = session()->getId();
@@ -22,6 +22,6 @@ it('logs the user out, invalidates the session and rotates the CSRF token', func
         ->and(session()->token())->toBeString()->not->toBe($csrfToken);
 })->group('feature', 'auth');
 
-it('redirects guests to the login page instead of logging out', function () {
+it('redirects guests to the login page instead of logging out', function (): void {
     $this->delete(route('logout'))->assertRedirect(route('login'));
 })->group('feature', 'auth');

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 class CreateAdminUser extends Command
 {
     protected $signature = 'make:admin {email} {password}';
+
     protected $description = 'Create an admin user';
 
     public function handle(): void
@@ -26,4 +27,4 @@ class CreateAdminUser extends Command
     }
 }
 
-//php artisan make:admin admin@example.com secret123
+// php artisan make:admin admin@example.com secret123
